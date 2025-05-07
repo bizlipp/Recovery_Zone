@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Message from Your Family - Kidney Fix-It Plan</title>
+  <link rel="stylesheet" href="Kplan.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <button id="mode-toggle" class="mode-toggle" aria-label="Toggle dark mode">
+    <i class="fas fa-moon"></i>
+  </button>
+
+  <header>
+    <div class="personal-message">
+      <h1>Hey Pops, We Care About You</h1>
+      <p>We put this together because we want many more years of your stories and wisdom.</p>
+    </div>
+  </header>
+
+  <main>
+    <section id="story-section" class="content-section">
+      <div class="card-header">
+        <h2><i class="fas fa-quote-left"></i> "You've Still Got Time to Patch the Roof"</h2>
+        <button class="card-toggle">
+          <span class="toggle-text">Hide</span>
+          <i class="fas fa-chevron-up toggle-icon"></i>
+        </button>
+      </div>
+      <div class="card-content">
+        <!-- Filled via JavaScript -->
+      </div>
+    </section>
+
+    <section id="daily-check" class="content-section">
+      <div class="card-header">
+        <h2><i class="fas fa-check-circle"></i> Your Daily Checklist</h2>
+        <button class="card-toggle">
+          <span class="toggle-text">Hide</span>
+          <i class="fas fa-chevron-up toggle-icon"></i>
+        </button>
+      </div>
+      <div class="card-content">
+        <p class="subtitle">Small things that make a big difference. No pressure - just track what feels right.</p>
+        <div id="checklist-container">
+          <!-- Filled via JavaScript -->
+        </div>
+        <div id="streak-counter">
+          <p>Your current streak: <span id="streak-count">0</span> days</p>
+          <p id="streak-message"></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="toolkit-section" class="content-section">
+      <div class="card-header">
+        <h2><i class="fas fa-toolbox"></i> Tools for Kidney Restoration</h2>
+        <button class="card-toggle">
+          <span class="toggle-text">Hide</span>
+          <i class="fas fa-chevron-up toggle-icon"></i>
+        </button>
+      </div>
+      <div class="card-content">
+        <!-- Filled via JavaScript -->
+      </div>
+    </section>
+
+    <section id="routine-section" class="content-section">
+      <div class="card-header">
+        <h2><i class="fas fa-calendar-check"></i> Daily Routine</h2>
+        <button class="card-toggle">
+          <span class="toggle-text">Hide</span>
+          <i class="fas fa-chevron-up toggle-icon"></i>
+        </button>
+      </div>
+      <div class="card-content">
+        <!-- Filled via JavaScript -->
+      </div>
+    </section>
+  </main>
+
+  <div class="floating-widget">
+    <div class="widget-streak">
+      <i class="fas fa-fire"></i>
+      <div>
+        <span id="floating-streak-count">0</span> day streak
+      </div>
+    </div>
+    <div class="widget-progress">
+      <div class="progress-text"><span id="completed-count">0</span> of <span id="total-count">5</span> done today</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+      </div>
+    </div>
+    <div class="widget-actions">
+      <button id="mark-all-done">Mark Today Complete</button>
+    </div>
+  </div>
+
+  <div class="easter-egg" id="easter-egg">
+    Still got it, Pops. Still got it.
+  </div>
+
+  <footer>
+    <button id="increase-text" class="text-size-btn" aria-label="Make text larger">
+      <i class="fas fa-plus"></i> Larger Text
+    </button>
+    <button id="decrease-text" class="text-size-btn" aria-label="Make text smaller">
+      <i class="fas fa-minus"></i> Smaller Text
+    </button>
+    <button id="read-aloud" class="audio-btn" aria-label="Read this page aloud">
+      <i class="fas fa-volume-up"></i> Read Aloud
+    </button>
+    <button id="stop-reading" class="audio-btn" aria-label="Stop reading aloud">
+      <i class="fas fa-volume-mute"></i> Stop Reading
+    </button>
+    <p class="love-note">Made with love by your family. We're not trying to change you - just keep you around longer.</p>
+  </footer>
+
+  <script src="Kplan.js"></script>
+</body>
+</html>
