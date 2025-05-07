@@ -75,6 +75,7 @@ const milestoneMessages = {
 // Load saved data
 document.addEventListener('DOMContentLoaded', function() {
   loadLocalStorage();
+  showDailyProgressReport();
   populateSections();
   populateChecklist();
   initAccessibilityControls();
@@ -684,3 +685,86 @@ document.addEventListener('scroll', function() {
     currentActiveSection.classList.add('active-section');
   }
 });
+
+// Daily Progress Report
+function showDailyProgressReport() {
+  const today = new Date().toISOString().split('T')[0];
+  const lastViewedDate = localStorage.getItem('lastViewedDate');
+  const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+
+  if (lastViewedDate === today) return; // Already viewed today
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yStr = yesterday.toISOString().split('T')[0];
+  const yData = checklistData[yStr];
+
+  if (!yData) return;
+
+  const completed = Object.values(yData).filter(v => v === true).length;
+  const total = 5; // adjust if dynamic
+  const percent = Math.round((completed / total) * 100);
+
+  const streakData = parseInt(localStorage.getItem('streakCount') || '0');
+  
+  // Get appropriate message based on completion and streak
+  let message = '';
+  
+  // Check streak milestones first
+  if (streakData === 3) {
+    message = `"You've got momentum, old man. Three days strong!"`;
+  } else if (streakData === 7) {
+    message = `"A full week! Your kidneys are starting to feel the difference."`;
+  } else if (streakData === 14) {
+    message = `"Two weeks of consistency - this is how lasting change happens."`;
+  } else if (streakData === 21) {
+    message = `"Three weeks in! You've built a real habit now."`;
+  } else if (streakData === 30) {
+    message = `"A WHOLE MONTH! That's the kind of commitment that moves mountains."`;
+  } else if (streakData >= 60 && streakData % 30 === 0) {
+    message = `"${streakData} days. Remember how you used to feel compared to now?"`;
+  } else {
+    // If not a streak milestone, use the completion percentage
+    if (percent === 100) {
+      message = `"You nailed it yesterday. Your kidneys are smiling today."`;
+    } else if (percent >= 60) {
+      message = `"More than halfway. Today's a chance to top that."`;
+    } else {
+      message = `"Every day's a reset button. Let's aim higher today."`;
+    }
+  }
+
+  const report = document.createElement('div');
+  report.className = 'quote-box daily-report';
+  report.innerHTML = `
+    <span class="close-report" title="Close this message">&times;</span>
+    <strong>Yesterday's Progress</strong><br>
+    ✅ ${completed} of ${total} tasks completed<br>
+    🔁 Current streak: <strong>${streakData} days</strong><br><br>
+    <em>${message}</em>
+  `;
+
+  document.querySelector('main').prepend(report);
+  localStorage.setItem('lastViewedDate', today);
+  
+  // Add close button functionality
+  const closeButton = report.querySelector('.close-report');
+  closeButton.addEventListener('click', () => {
+    report.style.opacity = '0';
+    report.style.transform = 'translateY(-20px)';
+    setTimeout(() => {
+      if (report.parentNode) report.parentNode.removeChild(report);
+    }, 500);
+  });
+  
+  // Auto-hide after 30 seconds
+  setTimeout(() => {
+    if (report.parentNode) {
+      report.style.opacity = '0';
+      report.style.transform = 'translateY(-20px)';
+      setTimeout(() => {
+        if (report.parentNode) report.parentNode.removeChild(report);
+      }, 500);
+    }
+  }, 30000);
+}
