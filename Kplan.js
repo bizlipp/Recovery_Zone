@@ -26,6 +26,7 @@ let speechSynthesis = window.speechSynthesis;
 let currentUtterance = null;
 let isReading = false;
 let isDarkMode = false;
+let preferredVoice = null;
 
 // List of friendly easter egg messages
 const easterEggMessages = [
@@ -84,7 +85,47 @@ document.addEventListener('DOMContentLoaded', function() {
   updateFloatingWidget();
   setupMarkAllDone();
   scheduleRandomEasterEgg();
+  
+  // Initialize voice selection
+  if (speechSynthesis.getVoices().length === 0) {
+    speechSynthesis.onvoiceschanged = chooseBestVoice;
+  } else {
+    chooseBestVoice();
+  }
 });
+
+// Function to select the best available male voice
+function chooseBestVoice() {
+  const voices = speechSynthesis.getVoices();
+  
+  const priorityList = [
+    'Google US English',
+    'Samsung US English Male',
+    'en-US-Wavenet-D',
+    'Microsoft David Desktop'
+  ];
+  
+  // Try exact matches from priority list
+  for (let name of priorityList) {
+    const match = voices.find(v => v.name === name);
+    if (match) {
+      preferredVoice = match;
+      return;
+    }
+  }
+  
+  // If no exact match, try to find a male-sounding voice
+  const maleVoice = voices.find(voice => 
+    (voice.name.includes('Male') || 
+     voice.name.includes('David') || 
+     voice.name.includes('Tom') ||
+     voice.name.includes('Mark'))
+  );
+  
+  if (maleVoice) {
+    preferredVoice = maleVoice;
+  }
+}
 
 // Card Toggle Functionality
 function initCardToggles() {
@@ -583,7 +624,7 @@ function initAccessibilityControls() {
     }
   });
   
-  // Read aloud functionality
+  // Read aloud functionality with improved voice selection
   readAloudBtn.addEventListener('click', function() {
     if (isReading) return;
     
@@ -604,6 +645,7 @@ function initAccessibilityControls() {
     if (fullText.trim() === '') {
       const message = "Please open a section to read its content aloud.";
       currentUtterance = new SpeechSynthesisUtterance(message);
+      if (preferredVoice) currentUtterance.voice = preferredVoice;
       speechSynthesis.speak(currentUtterance);
       return;
     }
@@ -613,20 +655,9 @@ function initAccessibilityControls() {
     currentUtterance.rate = 0.9; // Slightly slower
     currentUtterance.pitch = 1;
     
-    // Get available voices and select a good one
-    let voices = speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      // Try to find a male voice
-      const maleVoice = voices.find(voice => 
-        voice.name.includes('Male') || 
-        voice.name.includes('David') || 
-        voice.name.includes('Tom') ||
-        voice.name.includes('Mark')
-      );
-      
-      if (maleVoice) {
-        currentUtterance.voice = maleVoice;
-      }
+    // Apply the chosen voice if available
+    if (preferredVoice) {
+      currentUtterance.voice = preferredVoice;
     }
     
     // Add events
