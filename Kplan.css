@@ -1,13 +1,15 @@
 :root {
   --text-size-base: 18px;
-  --primary-color: #2c3e50;
-  --secondary-color: #3498db;
-  --accent-color: #e67e22;
-  --background-color: #f8f9fa;
-  --card-color: #fff;
-  --text-color: #333;
-  --border-color: #ddd;
-  --success-color: #27ae60;
+  --primary-color: #2c3e50; /* Dark blue */
+  --secondary-color: #2980b9; /* Slightly darker blue than before for better contrast */
+  --accent-color: #d35400; /* Darker orange for better contrast */
+  --background-color: #f8f9fa; /* Light gray background */
+  --card-color: #ffffff; /* Pure white */
+  --text-color: #2c3e50; /* Using primary color for text */
+  --border-color: #cfd8dc; /* Slightly darker border */
+  --success-color: #27ae60; /* Green */
+  --error-color: #e74c3c; /* Red for errors */
+  --quiet-text-color: #5d6d7e; /* For subtitles and less important text */
 }
 
 body {
@@ -127,7 +129,7 @@ h2 { font-size: 1.8rem; }
 h3 { font-size: 1.4rem; }
 
 .subtitle {
-  color: #555;
+  color: var(--quiet-text-color);
   font-style: italic;
   margin-top: -5px;
 }
@@ -140,11 +142,12 @@ ul {
 li {
   margin-bottom: 15px;
   position: relative;
+  line-height: 1.5;
 }
 
 strong {
   color: var(--primary-color);
-  font-weight: 600;
+  font-weight: 700; /* Bolder for better emphasis */
 }
 
 .icon {
@@ -162,12 +165,13 @@ strong {
 .checklist-item {
   display: flex;
   align-items: center;
-  padding: 12px;
-  background-color: rgba(255, 255, 255, 0.8);
+  padding: 14px; /* Slightly larger padding */
+  background-color: var(--card-color);
   border-radius: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   transition: background-color 0.3s;
   border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow for depth */
 }
 
 .checklist-item:hover {
@@ -185,6 +189,7 @@ strong {
   flex-grow: 1;
   cursor: pointer;
   font-size: 1.1rem;
+  color: var(--text-color); /* Explicit color assignment */
 }
 
 .checklist-info {
@@ -196,14 +201,15 @@ strong {
 
 .info-tooltip {
   display: none;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
+  background-color: var(--card-color);
+  border: 1px solid var(--border-color);
   padding: 15px;
   border-radius: 8px;
   margin-top: 10px;
-  font-size: 0.95rem;
-  color: #555;
+  font-size: 1rem;
+  color: var(--text-color);
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+  line-height: 1.5;
 }
 
 .show-info .info-tooltip {
@@ -351,15 +357,18 @@ footer {
 
 /* Dark Mode Styling */
 body.dark-mode {
-  --background-color: #121212;
-  --card-color: #1e1e1e;
-  --text-color: #e0e0e0;
-  --border-color: #333;
-  --primary-color: #1a4a72;
+  --primary-color: #3498db; /* Brighter blue for dark mode */
+  --secondary-color: #64b5f6; /* Light blue */
+  --accent-color: #e67e22; /* Brighter orange for dark mode contrast */
+  --background-color: #121212; /* Very dark gray/almost black */
+  --card-color: #1e1e1e; /* Dark card background */
+  --text-color: #ecf0f1; /* Very light gray, almost white */
+  --border-color: #444; /* More visible border in dark mode */
+  --quiet-text-color: #9eb2c7; /* Lighter but still soft color for subtitles */
 }
 
 body.dark-mode .card-toggle {
-  color: #64b5f6;
+  color: #64b5f6; /* Light blue for better visibility */
 }
 
 body.dark-mode .info-tooltip {
@@ -369,7 +378,7 @@ body.dark-mode .info-tooltip {
 }
 
 body.dark-mode .quote-box {
-  background-color: rgba(38, 50, 56, 0.5);
+  background-color: rgba(52, 152, 219, 0.08); /* Slight blue tint for dark mode */
 }
 
 /* Random Quote or Easter Egg */
@@ -504,12 +513,15 @@ body.dark-mode .quote-box {
 
 /* Special Elements */
 .quote-box {
-  background-color: rgba(232, 248, 245, 0.5);
+  background-color: rgba(44, 62, 80, 0.05); /* Light tint of primary color */
   border-left: 5px solid var(--accent-color);
-  padding: 15px;
+  padding: 16px;
   margin: 20px 0;
   font-style: italic;
   border-radius: 5px;
+  color: var(--text-color);
+  font-size: 1.05rem;
+  line-height: 1.6;
 }
 
 .progress-container {
@@ -705,13 +717,29 @@ input[type="checkbox"]:checked::after {
 /* Dark mode improvements for Samsung AMOLED screens */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-color: #000000;
-    --card-color: #121212;
-    --border-color: #333333;
+    --background-color: #000000; /* True black */
+    --card-color: #121212; /* Very dark gray */
+    --border-color: #333333; /* Dark borders */
+    --text-color: #ffffff; /* Pure white text for maximum contrast */
+    --quiet-text-color: #aecef5; /* Lighter blue-gray */
   }
   
   .achievement-badge {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Improve text on dark backgrounds */
+  h1, h2, h3 {
+    color: #64b5f6; /* Light blue for headings */
+  }
+  
+  /* Additional contrast improvements */
+  .card-toggle {
+    color: #64b5f6; /* Light blue for better visibility */
+  }
+  
+  strong {
+    color: #64b5f6; /* Light blue for emphasized text */
   }
 }
 
