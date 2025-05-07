@@ -1,0 +1,36 @@
+{
+  "name": "Kidney Fix-It Plan",
+  "short_name": "Kidney Plan",
+  "description": "A daily guide to kidney health with checklists and progress tracking",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0e766e",
+  "theme_color": "#0e766e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Daily Checklist",
+      "url": "./index.html#daily-check",
+      "description": "Go directly to your daily checklist"
+    },
+    {
+      "name": "Shopping Guide",
+      "url": "./index.html#shopping-section",
+      "description": "Find where to get kidney-friendly products"
+    }
+  ]
+} 

@@ -3,14 +3,198 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0e766e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>A Message from Your Family - Kidney Fix-It Plan</title>
   <link rel="stylesheet" href="Kplan.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Add manifest for PWA capability -->
+  <link rel="manifest" href="manifest.json">
+  <!-- Add touch icons -->
+  <link rel="icon" sizes="192x192" href="assets/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <style>
+    /* Achievement badge styling */
+    .achievement-badge {
+      position: relative;
+      margin: 20px auto;
+      max-width: 600px;
+      text-align: center;
+      padding: 30px;
+      background-color: var(--background-color);
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      border: 2px solid var(--accent-color);
+      display: none;
+    }
+    
+    .achievement-badge.show {
+      display: block;
+      animation: badgeAppear 0.8s ease-in-out;
+    }
+    
+    .achievement-badge h3 {
+      color: var(--accent-color);
+      border-bottom: none;
+      padding-bottom: 5px;
+      font-size: 1.6rem;
+    }
+    
+    .achievement-badge .icon-container {
+      font-size: 3rem;
+      color: var(--accent-color);
+      margin: 10px 0;
+    }
+    
+    .achievement-badge p {
+      font-size: 1.2rem;
+    }
+    
+    .achievement-list {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: var(--card-color);
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .achievement-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: var(--background-color);
+    }
+    
+    .achievement-item i {
+      font-size: 1.5rem;
+      margin-right: 15px;
+      color: var(--secondary-color);
+    }
+    
+    .achievement-item.unlocked i {
+      color: var(--success-color);
+    }
+    
+    .achievement-item.locked {
+      opacity: 0.6;
+    }
+    
+    @keyframes badgeAppear {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    /* Progress chart styling */
+    .progress-chart {
+      width: 100%;
+      margin: 20px 0;
+    }
+    
+    .progress-chart-container {
+      height: 200px;
+      background-color: var(--card-color);
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+    }
+    
+    .chart-bar {
+      position: absolute;
+      bottom: 20px;
+      width: 16px;
+      background-color: var(--accent-color);
+      border-radius: 4px 4px 0 0;
+      transition: height 0.5s ease;
+    }
+    
+    .chart-label {
+      position: absolute;
+      bottom: 0;
+      font-size: 12px;
+      color: var(--text-color);
+      text-align: center;
+      padding-top: 5px;
+    }
+    
+    /* Shopping section styling */
+    .shopping-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.95rem;
+      overflow-x: auto;
+      display: block;
+    }
+    
+    .shopping-table th, 
+    .shopping-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .shopping-table th {
+      background-color: var(--primary-color);
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+    
+    .shopping-table tr:hover {
+      background-color: rgba(232, 248, 245, 0.3);
+    }
+    
+    .shopping-table td:first-child {
+      font-weight: bold;
+    }
+    
+    @media (max-width: 768px) {
+      .shopping-table th, 
+      .shopping-table td {
+        padding: 6px;
+        font-size: 0.9rem;
+      }
+      
+      .shopping-table th:nth-child(4),
+      .shopping-table td:nth-child(4),
+      .shopping-table th:nth-child(5),
+      .shopping-table td:nth-child(5) {
+        display: none;
+      }
+    }
+    
+    .shop-button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.3s;
+    }
+    
+    .shop-button:hover {
+      background-color: var(--secondary-color);
+    }
+  </style>
 </head>
 <body>
   <button id="mode-toggle" class="mode-toggle" aria-label="Toggle dark mode">
     <i class="fas fa-moon"></i>
   </button>
+
+  <!-- Offline indicator -->
+  <div id="offline-message" class="offline-indicator">
+    <i class="fas fa-wifi"></i> You're offline, but everything still works!
+  </div>
 
   <header>
     <div class="personal-message">
@@ -53,6 +237,33 @@
       </div>
     </section>
 
+    <section id="progress-section" class="content-section">
+      <div class="card-header">
+        <h2><i class="fas fa-chart-line"></i> Your Progress</h2>
+        <button class="card-toggle">
+          <span class="toggle-text">Hide</span>
+          <i class="fas fa-chevron-up toggle-icon"></i>
+        </button>
+      </div>
+      <div class="card-content">
+        <p class="subtitle">See how far you've come. Every day matters.</p>
+        
+        <div class="progress-chart">
+          <h3>Past 7 Days</h3>
+          <div class="progress-chart-container" id="weekly-chart">
+            <!-- Bars will be added by JavaScript -->
+          </div>
+        </div>
+        
+        <div class="achievement-list">
+          <h3>Your Achievements</h3>
+          <div id="achievements-container">
+            <!-- Filled via JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="toolkit-section" class="content-section">
       <div class="card-header">
         <h2><i class="fas fa-toolbox"></i> Tools for Kidney Restoration</h2>
@@ -78,7 +289,68 @@
         <!-- Filled via JavaScript -->
       </div>
     </section>
+    
+    <section id="shopping-section" class="content-section">
+      <div class="card-header">
+        <h2><i class="fas fa-shopping-cart"></i> Where to Get This Stuff (Spirit Lake, ID)</h2>
+        <button class="card-toggle">
+          <span class="toggle-text">Hide</span>
+          <i class="fas fa-chevron-up toggle-icon"></i>
+        </button>
+      </div>
+      <div class="card-content">
+        <p class="subtitle">Everything you need is available locally. Start with what's easiest to find.</p>
+        
+        <div class="shopping-filters">
+          <button class="shop-button" id="show-miller">
+            <i class="fas fa-store"></i> Miller's Harvest Foods
+          </button>
+          <button class="shop-button" id="show-pharmacy">
+            <i class="fas fa-prescription-bottle-alt"></i> White Cross Pharmacy
+          </button>
+          <button class="shop-button" id="show-dollar">
+            <i class="fas fa-dollar-sign"></i> Family Dollar
+          </button>
+          <button class="shop-button" id="show-all">
+            <i class="fas fa-list"></i> Show All
+          </button>
+        </div>
+        
+        <table class="shopping-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Store</th>
+              <th>Where to Look</th>
+              <th>Est. Price</th>
+              <th>Ask For...</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="miller"><td>Nettle Tea Bags</td><td>Miller's Harvest Foods</td><td>Tea aisle / Health section</td><td>$5–7</td><td>"Do you have nettle tea or herbal teas?"</td></tr>
+            <tr class="miller"><td>Blackstrap Molasses</td><td>Miller's Harvest Foods</td><td>Baking aisle</td><td>$4–6</td><td>"Where's the blackstrap molasses?"</td></tr>
+            <tr class="miller dollar"><td>Himalayan Pink Salt</td><td>Miller's / Family Dollar</td><td>Spices / Natural Foods</td><td>$3–5</td><td>"Do you carry pink Himalayan salt?"</td></tr>
+            <tr class="miller"><td>Ginger Root</td><td>Miller's</td><td>Produce section</td><td>$1–3</td><td>"Where's the fresh ginger root?"</td></tr>
+            <tr class="pharmacy"><td>Castor Oil</td><td>White Cross Pharmacy</td><td>Laxative or supplement section</td><td>$8–12</td><td>"Do you have cold-pressed castor oil for health use?"</td></tr>
+            <tr class="dollar pharmacy"><td>Epsom Salt</td><td>Family Dollar / White Cross</td><td>Bath or pharmacy aisle</td><td>$5–7</td><td>"Where's the Epsom salt for soaking?"</td></tr>
+            <tr class="pharmacy"><td>Magnesium Spray</td><td>White Cross Pharmacy</td><td>Sleep aid or supplements section</td><td>$10–15</td><td>"Do you sell magnesium oil spray?"</td></tr>
+            <tr class="pharmacy"><td>Nettle Seed / Rehmannia</td><td>White Cross (special order)</td><td>Ask pharmacist</td><td>$10–15</td><td>"Can you order nettle seed or rehmannia tincture?"</td></tr>
+          </tbody>
+        </table>
+        <div class="quote-box">
+          Start with what's in town. Even just the tea, lemon water, and foot soaks can make a difference.
+        </div>
+      </div>
+    </section>
   </main>
+
+  <div class="achievement-badge" id="achievement-badge">
+    <div class="icon-container">
+      <i class="fas fa-trophy"></i>
+    </div>
+    <h3>Achievement Unlocked!</h3>
+    <p id="achievement-text">You've completed your first day!</p>
+  </div>
 
   <div class="floating-widget">
     <div class="widget-streak">
@@ -119,6 +391,403 @@
   </footer>
 
   <script src="Kplan.js"></script>
-  <script src="voice-enhancement.js"></script>
+  <script>
+    // Progress chart & achievements functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize the progress chart and achievements
+      initializeProgressChart();
+      initializeAchievements();
+      initializeShoppingFilters();
+      setupMobileOptimizations();
+      
+      // Monitor online/offline status
+      setupNetworkMonitoring();
+    });
+    
+    function initializeProgressChart() {
+      const weeklyChart = document.getElementById('weekly-chart');
+      const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+      const today = new Date();
+      
+      // Clear existing content
+      weeklyChart.innerHTML = '';
+      
+      // Generate bars for the past 7 days
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        const dateString = date.toISOString().split('T')[0];
+        const dayData = checklistData[dateString] || {};
+        
+        // Calculate completion percentage
+        const totalItems = 5; // Same as our checklist items
+        const completedItems = Object.values(dayData).filter(v => v === true).length;
+        const percentage = Math.min(100, (completedItems / totalItems) * 100);
+        
+        // Create the bar
+        const barContainer = document.createElement('div');
+        barContainer.style.position = 'absolute';
+        barContainer.style.left = `${(6-i) * 14 + 2}%`;
+        barContainer.style.bottom = '0';
+        barContainer.style.width = '10%';
+        barContainer.style.textAlign = 'center';
+        
+        const bar = document.createElement('div');
+        bar.className = 'chart-bar';
+        bar.style.height = `${percentage}%`;
+        bar.style.maxHeight = '160px';
+        bar.style.left = '50%';
+        bar.style.transform = 'translateX(-50%)';
+        bar.style.backgroundColor = percentage === 100 ? 'var(--success-color)' : 'var(--accent-color)';
+        
+        // Create day label
+        const label = document.createElement('div');
+        label.className = 'chart-label';
+        label.style.width = '100%';
+        label.textContent = date.getDate() + '/' + (date.getMonth() + 1);
+        
+        barContainer.appendChild(bar);
+        barContainer.appendChild(label);
+        weeklyChart.appendChild(barContainer);
+      }
+    }
+    
+    function initializeShoppingFilters() {
+      // Shopping filters functionality
+      const showMiller = document.getElementById('show-miller');
+      const showPharmacy = document.getElementById('show-pharmacy');
+      const showDollar = document.getElementById('show-dollar');
+      const showAll = document.getElementById('show-all');
+      
+      const millerItems = document.querySelectorAll('.miller');
+      const pharmacyItems = document.querySelectorAll('.pharmacy');
+      const dollarItems = document.querySelectorAll('.dollar');
+      const allItems = document.querySelectorAll('.shopping-table tbody tr');
+      
+      showMiller.addEventListener('click', function() {
+        allItems.forEach(item => {
+          item.style.display = 'none';
+        });
+        millerItems.forEach(item => {
+          item.style.display = '';
+        });
+        highlightActiveButton(this);
+      });
+      
+      showPharmacy.addEventListener('click', function() {
+        allItems.forEach(item => {
+          item.style.display = 'none';
+        });
+        pharmacyItems.forEach(item => {
+          item.style.display = '';
+        });
+        highlightActiveButton(this);
+      });
+      
+      showDollar.addEventListener('click', function() {
+        allItems.forEach(item => {
+          item.style.display = 'none';
+        });
+        dollarItems.forEach(item => {
+          item.style.display = '';
+        });
+        highlightActiveButton(this);
+      });
+      
+      showAll.addEventListener('click', function() {
+        allItems.forEach(item => {
+          item.style.display = '';
+        });
+        highlightActiveButton(this);
+      });
+      
+      // Initially highlight "Show All" as active
+      highlightActiveButton(showAll);
+      
+      function highlightActiveButton(activeButton) {
+        const allButtons = [showMiller, showPharmacy, showDollar, showAll];
+        allButtons.forEach(button => {
+          if (button === activeButton) {
+            button.style.backgroundColor = 'var(--success-color)';
+          } else {
+            button.style.backgroundColor = 'var(--primary-color)';
+          }
+        });
+      }
+    }
+    
+    function initializeAchievements() {
+      const achievements = [
+        { id: 'first-day', name: 'First Steps', icon: 'fa-shoe-prints', requirement: 'Complete your first day', unlocked: false },
+        { id: 'three-day', name: 'Building Habits', icon: 'fa-seedling', requirement: '3 day streak', unlocked: false },
+        { id: 'week-streak', name: 'Steady Progress', icon: 'fa-fire', requirement: '7 day streak', unlocked: false },
+        { id: 'two-week', name: 'Committed', icon: 'fa-calendar-check', requirement: '14 day streak', unlocked: false },
+        { id: 'month-streak', name: 'New Lifestyle', icon: 'fa-medal', requirement: '30 day streak', unlocked: false },
+        { id: 'perfect-week', name: 'Perfect Week', icon: 'fa-star', requirement: 'Complete all tasks for 7 days straight', unlocked: false }
+      ];
+      
+      // Get user streak and completed days
+      const streak = parseInt(document.getElementById('streak-count').textContent);
+      const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+      
+      // Count days with at least one completed task
+      const completedDays = Object.keys(checklistData).filter(date => {
+        return Object.values(checklistData[date]).filter(v => v === true).length > 0;
+      }).length;
+      
+      // Determine which achievements are unlocked
+      let unlockedAchievements = [];
+      
+      if (completedDays >= 1) achievements[0].unlocked = true;
+      if (streak >= 3) achievements[1].unlocked = true;
+      if (streak >= 7) achievements[2].unlocked = true;
+      if (streak >= 14) achievements[3].unlocked = true;
+      if (streak >= 30) achievements[4].unlocked = true;
+      
+      // Check for perfect week
+      let perfectWeek = true;
+      const today = new Date();
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        const dateString = date.toISOString().split('T')[0];
+        const dayData = checklistData[dateString] || {};
+        const completed = Object.values(dayData).filter(v => v === true).length;
+        
+        if (completed < 5) { // 5 is the total checklist items
+          perfectWeek = false;
+          break;
+        }
+      }
+      if (perfectWeek) achievements[5].unlocked = true;
+      
+      // Generate achievements HTML
+      const achievementsContainer = document.getElementById('achievements-container');
+      achievementsContainer.innerHTML = '';
+      
+      achievements.forEach(achievement => {
+        const item = document.createElement('div');
+        item.className = `achievement-item ${achievement.unlocked ? 'unlocked' : 'locked'}`;
+        item.innerHTML = `
+          <i class="fas ${achievement.icon}"></i>
+          <div>
+            <strong>${achievement.name}</strong>
+            <div>${achievement.requirement}</div>
+          </div>
+        `;
+        achievementsContainer.appendChild(item);
+        
+        // Store unlocked achievements for potential display
+        if (achievement.unlocked) {
+          unlockedAchievements.push(achievement);
+        }
+      });
+      
+      // Save achievements state
+      const savedAchievements = JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
+      
+      // Check for newly unlocked achievements
+      const newlyUnlocked = unlockedAchievements.filter(a => !savedAchievements.includes(a.id));
+      
+      // If there's a new achievement, show the badge
+      if (newlyUnlocked.length > 0) {
+        const firstNew = newlyUnlocked[0];
+        
+        // Update achievement badge and show it
+        const badge = document.getElementById('achievement-badge');
+        const badgeText = document.getElementById('achievement-text');
+        const badgeIcon = badge.querySelector('.icon-container i');
+        
+        badgeIcon.className = `fas ${firstNew.icon}`;
+        badgeText.textContent = `${firstNew.name}: ${firstNew.requirement}`;
+        
+        setTimeout(() => {
+          badge.classList.add('show');
+          
+          // Hide after 5 seconds
+          setTimeout(() => {
+            badge.classList.remove('show');
+          }, 5000);
+        }, 1000);
+        
+        // Save that we've shown this achievement
+        savedAchievements.push(firstNew.id);
+        localStorage.setItem('unlockedAchievements', JSON.stringify(savedAchievements));
+      }
+    }
+    
+    function setupMobileOptimizations() {
+      // Prevent zooming on double-tap for Samsung browsers
+      document.addEventListener('dblclick', function(e) {
+        e.preventDefault();
+      });
+      
+      // Add swipe capability for card toggling
+      const sections = document.querySelectorAll('.content-section');
+      sections.forEach(section => {
+        let touchStartY;
+        let touchEndY;
+        
+        section.addEventListener('touchstart', function(e) {
+          touchStartY = e.changedTouches[0].screenY;
+        }, {passive: true});
+        
+        section.addEventListener('touchend', function(e) {
+          touchEndY = e.changedTouches[0].screenY;
+          const diff = touchStartY - touchEndY;
+          
+          // If swipe distance is significant
+          if (Math.abs(diff) > 30) {
+            const header = section.querySelector('.card-header');
+            const toggle = header.querySelector('.card-toggle');
+            
+            // Swipe up to close, swipe down to open
+            if ((diff > 0 && section.classList.contains('expanded')) || 
+                (diff < 0 && !section.classList.contains('expanded'))) {
+              toggle.click();
+            }
+          }
+        }, {passive: true});
+      });
+      
+      // Add vibration feedback for completed tasks
+      const checkItems = document.querySelectorAll('.checklist-item input');
+      checkItems.forEach(item => {
+        item.addEventListener('change', function() {
+          if (this.checked && 'vibrate' in navigator) {
+            navigator.vibrate(50); // Short vibration feedback
+          }
+        });
+      });
+      
+      // Enable 'Add to Home Screen' instruction after 3 visits
+      const visitCount = parseInt(localStorage.getItem('visitCount') || '0') + 1;
+      localStorage.setItem('visitCount', visitCount.toString());
+      
+      if (visitCount === 3) {
+        // Show Add to Home Screen guidance for Samsung browsers
+        setTimeout(() => {
+          const homePrompt = document.createElement('div');
+          homePrompt.className = 'home-screen-prompt';
+          homePrompt.innerHTML = `
+            <div class="prompt-content">
+              <i class="fas fa-mobile-alt"></i>
+              <p>Add this app to your home screen for easier access!</p>
+              <p class="prompt-instructions">Tap the menu (⋮) then "Add to Home screen"</p>
+              <button id="close-prompt">Got it</button>
+            </div>
+          `;
+          document.body.appendChild(homePrompt);
+          
+          document.getElementById('close-prompt').addEventListener('click', function() {
+            homePrompt.style.display = 'none';
+            localStorage.setItem('homeScreenPromptShown', 'true');
+          });
+        }, 3000);
+      }
+      
+      // Check if it's a PWA (installed to home screen)
+      const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                    window.navigator.standalone;
+      
+      if (isPWA) {
+        // If running as installed app, make minor UI adjustments
+        document.body.classList.add('pwa-mode');
+      }
+      
+      // Register service worker for offline capability
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js')
+          .catch(function(error) {
+            console.log('Service worker registration failed:', error);
+          });
+      }
+    }
+    
+    function setupNetworkMonitoring() {
+      const offlineMessage = document.getElementById('offline-message');
+      
+      // Initial check
+      if (!navigator.onLine) {
+        offlineMessage.classList.add('show');
+        document.body.classList.add('offline');
+      }
+      
+      // Listen for online/offline events
+      window.addEventListener('online', function() {
+        offlineMessage.classList.remove('show');
+        document.body.classList.remove('offline');
+        
+        // Notify service worker
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({
+            type: 'NETWORK_STATUS',
+            online: true
+          });
+        }
+        
+        // Show a temporary "back online" message
+        const onlineMessage = document.createElement('div');
+        onlineMessage.className = 'offline-indicator';
+        onlineMessage.style.backgroundColor = 'var(--success-color)';
+        onlineMessage.innerHTML = '<i class="fas fa-wifi"></i> Connected again! Your progress is synced.';
+        document.body.appendChild(onlineMessage);
+        
+        setTimeout(() => {
+          onlineMessage.classList.add('show');
+          
+          setTimeout(() => {
+            onlineMessage.classList.remove('show');
+            setTimeout(() => onlineMessage.remove(), 300);
+          }, 3000);
+        }, 100);
+      });
+      
+      window.addEventListener('offline', function() {
+        offlineMessage.classList.add('show');
+        document.body.classList.add('offline');
+        
+        // Notify service worker
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({
+            type: 'NETWORK_STATUS',
+            online: false
+          });
+        }
+      });
+      
+      // Listen for messages from service worker
+      if (navigator.serviceWorker) {
+        navigator.serviceWorker.addEventListener('message', event => {
+          if (event.data && event.data.type === 'OFFLINE') {
+            offlineMessage.classList.add('show');
+            document.body.classList.add('offline');
+          } else if (event.data && event.data.type === 'ONLINE') {
+            offlineMessage.classList.remove('show');
+            document.body.classList.remove('offline');
+          }
+        });
+      }
+      
+      // Add battery-saving mode for Samsung AMOLED screens
+      if (navigator.getBattery) {
+        navigator.getBattery().then(battery => {
+          // If battery level is below 15%, enable battery saving mode
+          if (battery.level < 0.15) {
+            document.body.classList.add('battery-saving-mode');
+          }
+          
+          // Listen for battery level changes
+          battery.addEventListener('levelchange', () => {
+            if (battery.level < 0.15) {
+              document.body.classList.add('battery-saving-mode');
+            } else {
+              document.body.classList.remove('battery-saving-mode');
+            }
+          });
+        });
+      }
+    }
+  </script>
 </body>
-</html>
+</html> 

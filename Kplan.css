@@ -561,3 +561,182 @@ input[type="checkbox"]:checked::after {
   color: white;
   font-size: 14px;
 }
+
+/* Add to Home Screen Prompt */
+.home-screen-prompt {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--card-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-width: 320px;
+  width: 90%;
+  border: 2px solid var(--accent-color);
+  animation: slideUp 0.5s ease-out;
+}
+
+.prompt-content {
+  padding: 15px;
+  text-align: center;
+}
+
+.prompt-content i {
+  font-size: 2rem;
+  color: var(--accent-color);
+  margin-bottom: 10px;
+}
+
+.prompt-instructions {
+  margin: 10px 0;
+  font-size: 0.9em;
+  color: var(--text-color);
+}
+
+#close-prompt {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 0.95em;
+  transition: background-color 0.2s;
+}
+
+#close-prompt:hover {
+  background-color: var(--secondary-color);
+}
+
+@keyframes slideUp {
+  0% { transform: translate(-50%, 100px); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}
+
+/* PWA-specific styling */
+.pwa-mode .floating-widget {
+  bottom: 0;
+  border-radius: 0;
+  width: 100%;
+}
+
+.pwa-mode .mode-toggle {
+  top: 10px;
+}
+
+.pwa-mode header {
+  padding-top: 12px;
+}
+
+/* Samsung Galaxy optimizations */
+@media screen and (max-width: 420px) {
+  .card-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .checklist-item {
+    padding: 12px;
+  }
+  
+  .floating-widget {
+    padding: 10px;
+  }
+  
+  footer {
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+  }
+  
+  .text-size-btn, .audio-btn {
+    margin: 4px 0;
+  }
+  
+  /* Add tap highlighting effect */
+  .card-header, 
+  .checklist-item label, 
+  .shop-button,
+  #close-prompt,
+  .text-size-btn,
+  .audio-btn,
+  #mark-all-done {
+    -webkit-tap-highlight-color: rgba(14, 118, 110, 0.2);
+  }
+  
+  /* Optimize touch targets */
+  .card-toggle,
+  .checklist-item input[type="checkbox"] + label::before,
+  .shop-button,
+  .text-size-btn,
+  .audio-btn,
+  #mark-all-done {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Offline indicator */
+.offline-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--error-color);
+  color: white;
+  text-align: center;
+  padding: 8px;
+  font-size: 0.9rem;
+  z-index: 1000;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+}
+
+.offline-indicator.show {
+  transform: translateY(0);
+}
+
+.offline-indicator i {
+  margin-right: 5px;
+}
+
+/* Dark mode improvements for Samsung AMOLED screens */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #000000;
+    --card-color: #121212;
+    --border-color: #333333;
+  }
+  
+  .achievement-badge {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Battery saving mode */
+.battery-saving-mode {
+  --primary-color: #111111;
+  --secondary-color: #333333;
+  --accent-color: #444444;
+  --background-color: #000000;
+  --card-color: #111111;
+  --text-color: #dddddd;
+  --border-color: #333333;
+  --success-color: #444444;
+  --error-color: #444444;
+}
+
+.battery-saving-mode .achievement-badge,
+.battery-saving-mode .floating-widget,
+.battery-saving-mode footer,
+.battery-saving-mode .progress-chart-container {
+  box-shadow: none;
+}
+
+.battery-saving-mode .progress-bar-fill,
+.battery-saving-mode .chart-bar {
+  animation: none;
+  transition: none;
+}

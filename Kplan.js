@@ -26,7 +26,6 @@ let speechSynthesis = window.speechSynthesis;
 let currentUtterance = null;
 let isReading = false;
 let isDarkMode = false;
-let preferredVoice = null;
 
 // List of friendly easter egg messages
 const easterEggMessages = [
@@ -85,47 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
   updateFloatingWidget();
   setupMarkAllDone();
   scheduleRandomEasterEgg();
-  
-  // Initialize voice selection
-  if (speechSynthesis.getVoices().length === 0) {
-    speechSynthesis.onvoiceschanged = chooseBestVoice;
-  } else {
-    chooseBestVoice();
-  }
 });
-
-// Function to select the best available male voice
-function chooseBestVoice() {
-  const voices = speechSynthesis.getVoices();
-  
-  const priorityList = [
-    'Google US English',
-    'Samsung US English Male',
-    'en-US-Wavenet-D',
-    'Microsoft David Desktop'
-  ];
-  
-  // Try exact matches from priority list
-  for (let name of priorityList) {
-    const match = voices.find(v => v.name === name);
-    if (match) {
-      preferredVoice = match;
-      return;
-    }
-  }
-  
-  // If no exact match, try to find a male-sounding voice
-  const maleVoice = voices.find(voice => 
-    (voice.name.includes('Male') || 
-     voice.name.includes('David') || 
-     voice.name.includes('Tom') ||
-     voice.name.includes('Mark'))
-  );
-  
-  if (maleVoice) {
-    preferredVoice = maleVoice;
-  }
-}
 
 // Card Toggle Functionality
 function initCardToggles() {
@@ -434,14 +393,14 @@ function populateSections() {
     <p>Now your body's whispering something—it's not broken, but it's <span class="highlight-text">wearing thin</span>.</p>
     <p>Your kidneys? They're like the oil filter on a truck that's been running too hard without a flush. 
        Doesn't mean the whole truck's shot—just means if you keep pushing it the same way, you might not make it up the next hill.</p>
-    <p>That number they gave you—creatinine 2.62—means your kidneys are tired. Time to lighten the load and give 'em a fighting chance.</p>
+  <p>That number they gave you—creatinine 2.62—means your kidneys are tired. Time to lighten the load and give 'em a fighting chance.</p>
     <div class="quote-box">
       No one's asking you to give up your fire.<br>
       Just don't burn down the house with it.
     </div>
-  `;
+`;
 
-  // Toolkit Section
+// Toolkit Section
   const toolkitContent = toolkitSection.querySelector('.card-content');
   toolkitContent.innerHTML = `
     <ul>
@@ -454,30 +413,30 @@ function populateSections() {
       <li><strong><i class="fas fa-moon icon"></i> Jing Practices</strong> – Go to bed early, slow movements, rub lower back.</li>
       <li><strong><i class="fas fa-water icon"></i> Energetic Healing</strong> – Talk, sit by a river, let old wounds breathe.</li>
       <li><strong><i class="fas fa-shield-alt icon"></i> Protective Mindset</strong> – This isn't about quitting. It's about reinforcing.</li>
-    </ul>
+  </ul>
     <div class="quote-box">
       "It's not about what you cut out. It's about what you rebuild."
     </div>
-  `;
+`;
 
-  // Routine Section
+// Routine Section
   const routineContent = routineSection.querySelector('.card-content');
   routineContent.innerHTML = `
     <h3><i class="fas fa-sun icon"></i> Morning</h3>
-    <ul>
-      <li>Lemon water + pinch of salt</li>
-      <li>Nettle tea bag in hot water</li>
-    </ul>
+  <ul>
+    <li>Lemon water + pinch of salt</li>
+    <li>Nettle tea bag in hot water</li>
+  </ul>
     <h3><i class="fas fa-hamburger icon"></i> Midday</h3>
-    <ul>
-      <li>Castor oil pack while resting</li>
-      <li>Hot molasses drink</li>
-    </ul>
+  <ul>
+    <li>Castor oil pack while resting</li>
+    <li>Hot molasses drink</li>
+  </ul>
     <h3><i class="fas fa-moon icon"></i> Evening</h3>
-    <ul>
-      <li>Foot soak: Epsom + ginger slice</li>
-      <li>Spray magnesium oil on legs/back</li>
-    </ul>
+  <ul>
+    <li>Foot soak: Epsom + ginger slice</li>
+    <li>Spray magnesium oil on legs/back</li>
+  </ul>
     <div class="quote-box">
       "You don't have to change everything. Just change one or two things—and do them every damn day."
     </div>
@@ -624,7 +583,7 @@ function initAccessibilityControls() {
     }
   });
   
-  // Read aloud functionality with improved voice selection
+  // Read aloud functionality
   readAloudBtn.addEventListener('click', function() {
     if (isReading) return;
     
@@ -645,7 +604,6 @@ function initAccessibilityControls() {
     if (fullText.trim() === '') {
       const message = "Please open a section to read its content aloud.";
       currentUtterance = new SpeechSynthesisUtterance(message);
-      if (preferredVoice) currentUtterance.voice = preferredVoice;
       speechSynthesis.speak(currentUtterance);
       return;
     }
@@ -655,9 +613,20 @@ function initAccessibilityControls() {
     currentUtterance.rate = 0.9; // Slightly slower
     currentUtterance.pitch = 1;
     
-    // Apply the chosen voice if available
-    if (preferredVoice) {
-      currentUtterance.voice = preferredVoice;
+    // Get available voices and select a good one
+    let voices = speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      // Try to find a male voice
+      const maleVoice = voices.find(voice => 
+        voice.name.includes('Male') || 
+        voice.name.includes('David') || 
+        voice.name.includes('Tom') ||
+        voice.name.includes('Mark')
+      );
+      
+      if (maleVoice) {
+        currentUtterance.voice = maleVoice;
+      }
     }
     
     // Add events
