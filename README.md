@@ -105,4 +105,6 @@ Works on all modern browsers including:
 
 ## Credits
 
-Created with love for someone special. Special thanks to Font Awesome for the icons and the family who cares enough to create this. 
+Tim
+AeroVista llc.
+.nexus-labs
