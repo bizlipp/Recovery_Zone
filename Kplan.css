@@ -3,10 +3,11 @@
   --primary-color: #2c3e50; /* Dark blue */
   --secondary-color: #2980b9; /* Slightly darker blue than before for better contrast */
   --accent-color: #d35400; /* Darker orange for better contrast */
-  --background-color: #f8f9fa; /* Light gray background */
-  --card-color: #ffffff; /* Pure white */
+  --background-color: #ffffff; /* Pure white background */
+  --card-color: #ffffff; /* White cards */
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Subtle shadow for cards */
   --text-color: #2c3e50; /* Using primary color for text */
-  --border-color: #cfd8dc; /* Slightly darker border */
+  --border-color: #e0e6ed; /* Very light gray border */
   --success-color: #27ae60; /* Green */
   --error-color: #e74c3c; /* Red for errors */
   --quiet-text-color: #5d6d7e; /* For subtitles and less important text */
@@ -57,7 +58,7 @@ header {
 .content-section {
   background-color: var(--card-color);
   border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   padding: 30px;
   margin-bottom: 30px;
   border-left: 8px solid var(--accent-color);
@@ -166,16 +167,16 @@ strong {
   display: flex;
   align-items: center;
   padding: 14px; /* Slightly larger padding */
-  background-color: var(--card-color);
+  background-color: #f9fbff; /* Very light blue tint */
   border-radius: 8px;
   margin-bottom: 12px;
   transition: background-color 0.3s;
   border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Very subtle shadow for depth */
 }
 
 .checklist-item:hover {
-  background-color: rgba(232, 248, 245, 0.5);
+  background-color: #f0f7ff; /* Light blue on hover */
 }
 
 .checklist-item input[type="checkbox"] {
@@ -201,7 +202,7 @@ strong {
 
 .info-tooltip {
   display: none;
-  background-color: var(--card-color);
+  background-color: #f9fbff; /* Very light blue */
   border: 1px solid var(--border-color);
   padding: 15px;
   border-radius: 8px;
@@ -217,12 +218,12 @@ strong {
 }
 
 #streak-counter {
-  background-color: rgba(232, 248, 245, 0.5);
+  background-color: #f0f9f5; /* Very light green */
   padding: 15px;
   border-radius: 8px;
   text-align: center;
   margin-top: 20px;
-  border: 1px solid var(--success-color);
+  border: 1px solid #d5ebdf; /* Light green border */
 }
 
 #streak-count {
@@ -507,13 +508,14 @@ body.dark-mode .quote-box {
 }
 
 .highlight-text {
-  background-color: rgba(255, 255, 0, 0.3);
+  background-color: #fff8e0; /* Light yellow */
   padding: 0 3px;
+  border-radius: 2px;
 }
 
 /* Special Elements */
 .quote-box {
-  background-color: rgba(44, 62, 80, 0.05); /* Light tint of primary color */
+  background-color: #f7fbff; /* Very light blue background */
   border-left: 5px solid var(--accent-color);
   padding: 16px;
   margin: 20px 0;
