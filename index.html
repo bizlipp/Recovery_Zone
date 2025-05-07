@@ -51,6 +51,61 @@
       font-size: 1.2rem;
     }
     
+    /* Update notification styling */
+    .update-notification {
+      position: fixed;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--accent-color);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 1010;
+      max-width: 320px;
+      width: 90%;
+      text-align: center;
+      animation: slideUp 0.5s ease-out;
+    }
+    
+    .update-notification p {
+      margin: 0 0 10px 0;
+      font-weight: bold;
+    }
+    
+    .update-notification button {
+      background-color: white;
+      color: var(--accent-color);
+      border: none;
+      padding: 8px 15px;
+      margin: 0 5px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .update-notification button:hover {
+      background-color: #f1f1f1;
+    }
+    
+    #update-now {
+      background-color: white;
+    }
+    
+    #update-later {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    @media (max-width: 768px) {
+      .update-notification {
+        bottom: 75px;
+      }
+    }
+    
+    /* Achievement list styling */
     .achievement-list {
       margin-top: 30px;
       padding: 20px;
@@ -366,6 +421,7 @@
   </main>
 
   <div class="achievement-badge" id="achievement-badge">
+    <span class="close-badge" title="Close">&times;</span>
     <div class="icon-container">
       <i class="fas fa-trophy"></i>
     </div>
@@ -378,6 +434,7 @@
       <i class="fas fa-fire"></i>
       <div>
         <span id="floating-streak-count">0</span> day streak
+        <span class="widget-hint" id="widget-hint">(tap to expand)</span>
       </div>
     </div>
     <div class="widget-progress">
@@ -420,8 +477,6 @@
       initializeAchievements();
       initializeShoppingFilters();
       setupMobileOptimizations();
-      
-      // Monitor online/offline status
       setupNetworkMonitoring();
     });
     
@@ -604,11 +659,11 @@
         }
       });
       
-      // Save achievements state
-      const savedAchievements = JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
+      // Load saved achievements that have been displayed and acknowledged
+      const acknowledgedAchievements = JSON.parse(localStorage.getItem('acknowledgedAchievements') || '[]');
       
       // Check for newly unlocked achievements
-      const newlyUnlocked = unlockedAchievements.filter(a => !savedAchievements.includes(a.id));
+      const newlyUnlocked = unlockedAchievements.filter(a => !acknowledgedAchievements.includes(a.id));
       
       // If there's a new achievement, show the badge
       if (newlyUnlocked.length > 0) {
@@ -622,19 +677,29 @@
         badgeIcon.className = `fas ${firstNew.icon}`;
         badgeText.textContent = `${firstNew.name}: ${firstNew.requirement}`;
         
-        setTimeout(() => {
-          badge.classList.add('show');
-          
-          // Hide after 5 seconds
-          setTimeout(() => {
-            badge.classList.remove('show');
-          }, 5000);
-        }, 1000);
+        // Show badge - no longer setting a timeout to hide it
+        badge.classList.add('show');
         
-        // Save that we've shown this achievement
-        savedAchievements.push(firstNew.id);
-        localStorage.setItem('unlockedAchievements', JSON.stringify(savedAchievements));
+        // Don't automatically add to acknowledged achievements
+        // This will only be added when the user clicks the close button
+        badge.setAttribute('data-achievement-id', firstNew.id);
       }
+      
+      // Add close button event listener
+      document.querySelector('.close-badge').addEventListener('click', function() {
+        const badge = document.getElementById('achievement-badge');
+        badge.classList.remove('show');
+        
+        // Add this achievement to acknowledged list
+        const achievementId = badge.getAttribute('data-achievement-id');
+        if (achievementId) {
+          const acknowledgedAchievements = JSON.parse(localStorage.getItem('acknowledgedAchievements') || '[]');
+          if (!acknowledgedAchievements.includes(achievementId)) {
+            acknowledgedAchievements.push(achievementId);
+            localStorage.setItem('acknowledgedAchievements', JSON.stringify(acknowledgedAchievements));
+          }
+        }
+      });
     }
     
     function setupMobileOptimizations() {

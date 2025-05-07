@@ -1,18 +1,26 @@
+/* 
+ * Kidney Fix-It Plan - Main Stylesheet
+ * Optimized for performance and readability
+ */
+
+/* Core variables */
 :root {
   --text-size-base: 18px;
   --primary-color: #2c3e50; /* Dark blue */
-  --secondary-color: #2980b9; /* Slightly darker blue than before for better contrast */
+  --secondary-color: #2980b9; /* Slightly darker blue for better contrast */
   --accent-color: #d35400; /* Darker orange for better contrast */
+  --success-color: #27ae60; /* Green */
+  --error-color: #e74c3c; /* Red for errors */
   --background-color: #ffffff; /* Pure white background */
   --card-color: #ffffff; /* White cards */
   --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Subtle shadow for cards */
   --text-color: #2c3e50; /* Using primary color for text */
   --border-color: #e0e6ed; /* Very light gray border */
-  --success-color: #27ae60; /* Green */
-  --error-color: #e74c3c; /* Red for errors */
   --quiet-text-color: #5d6d7e; /* For subtitles and less important text */
+  --transition-speed: 0.3s; /* Standard transition speed */
 }
 
+/* Reset and base styles */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--background-color);
@@ -22,9 +30,10 @@ body {
   font-size: var(--text-size-base);
   line-height: 1.6;
   padding-bottom: 70px; /* Space for the floating bar */
+  transition: color var(--transition-speed), background-color var(--transition-speed);
 }
 
-/* Layout */
+/* Layout containers */
 header, main, footer {
   max-width: 1000px;
   margin: 0 auto;
@@ -54,7 +63,61 @@ header {
   opacity: 0.9;
 }
 
-/* Section Styling */
+/* Typography */
+h1, h2, h3 {
+  color: var(--primary-color);
+  padding-bottom: 10px;
+  margin-top: 25px;
+  border-bottom: 2px solid var(--border-color);
+  font-weight: 600;
+  transition: color var(--transition-speed);
+}
+
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.4rem; }
+
+.subtitle {
+  color: var(--quiet-text-color);
+  font-style: italic;
+  margin-top: -5px;
+}
+
+strong {
+  color: var(--primary-color);
+  font-weight: 700; /* Bolder for better emphasis */
+  transition: color var(--transition-speed);
+}
+
+.icon {
+  font-size: 1.4em;
+  margin-right: 8px;
+  color: var(--accent-color);
+  vertical-align: middle;
+  transition: color var(--transition-speed);
+}
+
+/* Text highlight */
+.highlight-text {
+  background-color: #fff8e0; /* Light yellow */
+  padding: 0 3px;
+  border-radius: 2px;
+  transition: background-color var(--transition-speed);
+}
+
+/* Lists */
+ul {
+  padding-left: 25px;
+  margin: 20px 0;
+}
+
+li {
+  margin-bottom: 15px;
+  position: relative;
+  line-height: 1.5;
+}
+
+/* Cards and sections */
 .content-section {
   background-color: var(--card-color);
   border-radius: 15px;
@@ -63,10 +126,10 @@ header {
   margin-bottom: 30px;
   border-left: 8px solid var(--accent-color);
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease, border-left-color var(--transition-speed);
+  animation: fadeIn 0.8s ease-in-out;
 }
 
-/* Collapsible Card Styling */
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -117,48 +180,27 @@ header {
   padding-bottom: 20px;
 }
 
-h1, h2, h3 {
-  color: var(--primary-color);
-  padding-bottom: 10px;
-  margin-top: 25px;
-  border-bottom: 2px solid var(--border-color);
-  font-weight: 600;
+/* Active section highlight */
+.active-section {
+  border-left: 8px solid var(--success-color);
+  transition: border-left-color var(--transition-speed);
 }
 
-h1 { font-size: 2.2rem; }
-h2 { font-size: 1.8rem; }
-h3 { font-size: 1.4rem; }
-
-.subtitle {
-  color: var(--quiet-text-color);
-  font-style: italic;
-  margin-top: -5px;
-}
-
-ul {
-  padding-left: 25px;
+/* Special elements */
+.quote-box {
+  background-color: #f7fbff; /* Very light blue background */
+  border-left: 5px solid var(--accent-color);
+  padding: 16px;
   margin: 20px 0;
+  font-style: italic;
+  border-radius: 5px;
+  color: var(--text-color);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
-li {
-  margin-bottom: 15px;
-  position: relative;
-  line-height: 1.5;
-}
-
-strong {
-  color: var(--primary-color);
-  font-weight: 700; /* Bolder for better emphasis */
-}
-
-.icon {
-  font-size: 1.4em;
-  margin-right: 8px;
-  color: var(--accent-color);
-  vertical-align: middle;
-}
-
-/* Daily Checklist */
+/* Daily checklist */
 #checklist-container {
   margin: 25px 0;
 }
@@ -170,7 +212,7 @@ strong {
   background-color: #f9fbff; /* Very light blue tint */
   border-radius: 8px;
   margin-bottom: 12px;
-  transition: background-color 0.3s;
+  transition: background-color var(--transition-speed);
   border: 1px solid var(--border-color);
   box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Very subtle shadow for depth */
 }
@@ -191,6 +233,7 @@ strong {
   cursor: pointer;
   font-size: 1.1rem;
   color: var(--text-color); /* Explicit color assignment */
+  transition: color var(--transition-speed);
 }
 
 .checklist-info {
@@ -211,12 +254,14 @@ strong {
   color: var(--text-color);
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
   line-height: 1.5;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
 .show-info .info-tooltip {
   display: block;
 }
 
+/* Streak counter */
 #streak-counter {
   background-color: #f0f9f5; /* Very light green */
   padding: 15px;
@@ -224,6 +269,7 @@ strong {
   text-align: center;
   margin-top: 20px;
   border: 1px solid #d5ebdf; /* Light green border */
+  transition: background-color var(--transition-speed);
 }
 
 #streak-count {
@@ -237,7 +283,7 @@ strong {
   margin-top: 5px;
 }
 
-/* Floating Streak Widget */
+/* Floating widget */
 .floating-widget {
   position: fixed;
   bottom: 0;
@@ -251,12 +297,68 @@ strong {
   justify-content: space-between;
   align-items: center;
   z-index: 1000;
+  transition: transform 0.3s ease, background-color var(--transition-speed);
+}
+
+/* Add styles for collapsible floating widget on mobile */
+@media (max-width: 768px) {
+  .floating-widget {
+    flex-direction: row;
+    padding: 8px 12px;
+  }
+  
+  .floating-widget.collapsed {
+    transform: translateY(calc(100% - 40px));
+  }
+  
+  .floating-widget.collapsed .widget-progress,
+  .floating-widget.collapsed .widget-actions {
+    display: none;
+  }
+  
+  .floating-widget.collapsed .widget-streak {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .floating-widget.collapsed .widget-streak::after {
+    content: "\f077"; /* up arrow */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 0.9rem;
+  }
+  
+  .floating-widget:not(.collapsed) .widget-streak::after {
+    content: "\f078"; /* down arrow */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 0.9rem;
+  }
+  
+  /* Adjust body padding to account for the smaller collapsed widget */
+  body {
+    padding-bottom: 40px;
+  }
 }
 
 .widget-streak {
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
+}
+
+.widget-hint {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  font-style: italic;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .widget-hint {
+    display: inline;
+  }
 }
 
 .widget-streak i {
@@ -282,11 +384,16 @@ strong {
   border-radius: 30px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s;
+  transition: background-color var(--transition-speed);
 }
 
 .widget-actions button:hover {
   background-color: #219653;
+}
+
+.widget-actions button:disabled {
+  opacity: 0.7;
+  cursor: default;
 }
 
 .progress-bar-container {
@@ -306,6 +413,81 @@ strong {
   transition: width 0.3s;
 }
 
+/* Progress tracking */
+.progress-container {
+  height: 12px;
+  width: 100%;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: var(--success-color);
+  border-radius: 10px;
+  width: 0%;
+  transition: width 0.5s;
+}
+
+/* Achievement badge styling */
+.achievement-badge {
+  position: relative;
+  margin: 20px auto;
+  max-width: 600px;
+  text-align: center;
+  padding: 30px;
+  background-color: var(--background-color);
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--accent-color);
+  display: none;
+  z-index: 1010; /* Match easter egg z-index */
+  transition: background-color var(--transition-speed), border-color var(--transition-speed);
+}
+
+.close-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  text-align: center;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.close-badge:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.achievement-badge.show {
+  display: block;
+  animation: badgeAppear 0.8s ease-in-out;
+}
+
+.achievement-badge h3 {
+  color: var(--accent-color);
+  border-bottom: none;
+  padding-bottom: 5px;
+  font-size: 1.6rem;
+}
+
+.achievement-badge .icon-container {
+  font-size: 3rem;
+  color: var(--accent-color);
+  margin: 10px 0;
+}
+
+.achievement-badge p {
+  font-size: 1.2rem;
+}
+
 /* Footer */
 footer {
   text-align: center;
@@ -323,7 +505,7 @@ footer {
   border-radius: 30px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.3s;
+  transition: background-color var(--transition-speed);
 }
 
 .text-size-btn:hover, .audio-btn:hover {
@@ -354,6 +536,184 @@ footer {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   z-index: 100;
   font-size: 1.2rem;
+  transition: background-color var(--transition-speed);
+}
+
+/* Easter egg messages */
+.easter-egg {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background-color: var(--card-color);
+  padding: 10px 15px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  font-style: italic;
+  max-width: 250px;
+  z-index: 1010; /* Increased from 90 to be above the floating widget (1000) */
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.5s ease, background-color var(--transition-speed), color var(--transition-speed);
+  display: none;
+}
+
+.easter-egg.show {
+  transform: translateY(0);
+  opacity: 1;
+  display: block;
+}
+
+.easter-egg::before {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid var(--card-color);
+  transition: border-top-color var(--transition-speed);
+}
+
+/* Offline indicator */
+.offline-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--error-color);
+  color: white;
+  text-align: center;
+  padding: 8px;
+  font-size: 0.9rem;
+  z-index: 1000;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease, background-color var(--transition-speed);
+}
+
+.offline-indicator.show {
+  transform: translateY(0);
+}
+
+.offline-indicator i {
+  margin-right: 5px;
+}
+
+/* Daily Progress Report styling */
+.daily-report {
+  background-color: #fff7e6; /* Light warm color */
+  border-left-color: #f39c12; /* Orange-yellow */
+  animation: slideDown 0.5s ease-in-out;
+  position: relative;
+  overflow: hidden;
+  transition: opacity 0.5s, transform 0.5s, background-color var(--transition-speed);
+}
+
+.daily-report:before {
+  content: '🌅';
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5rem;
+  opacity: 0.3;
+}
+
+.close-report {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: rgba(0,0,0,0.1);
+  color: var(--text-color);
+  transition: all 0.2s;
+  z-index: 1;
+}
+
+.close-report:hover {
+  background-color: rgba(0,0,0,0.2);
+}
+
+/* Customized checkbox style */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 25px;
+  width: 25px;
+  background-color: white;
+  border: 2px solid var(--border-color);
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--transition-speed), border-color var(--transition-speed);
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+input[type="checkbox"]:checked::after {
+  content: "\f00c";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  color: white;
+  font-size: 14px;
+}
+
+/* Accessibility */
+*:focus {
+  outline: 3px solid var(--secondary-color);
+  outline-offset: 3px;
+}
+
+/* Add some hover effects for interactive elements */
+a, button, .checklist-item, .info-tooltip {
+  transition: all var(--transition-speed) ease;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { 
+    max-height: 0; 
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to { 
+    max-height: 1000px; 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from { 
+    max-height: 1000px;
+    opacity: 1;
+  }
+  to { 
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes badgeAppear {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 /* Dark Mode Styling */
@@ -382,40 +742,58 @@ body.dark-mode .quote-box {
   background-color: rgba(52, 152, 219, 0.08); /* Slight blue tint for dark mode */
 }
 
-/* Random Quote or Easter Egg */
-.easter-egg {
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  background-color: var(--card-color);
-  padding: 10px 15px;
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-  font-style: italic;
-  max-width: 250px;
-  z-index: 90;
-  transform: translateY(20px);
-  opacity: 0;
-  transition: all 0.5s ease;
-  display: none;
+body.dark-mode .checklist-item {
+  background-color: #222;
+  border-color: #444;
 }
 
-.easter-egg.show {
-  transform: translateY(0);
-  opacity: 1;
-  display: block;
+body.dark-mode .checklist-item:hover {
+  background-color: #2a2a2a;
 }
 
-.easter-egg::before {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  right: 20px;
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 10px solid var(--card-color);
+body.dark-mode #streak-counter {
+  background-color: rgba(39, 174, 96, 0.1);
+  border-color: rgba(39, 174, 96, 0.3);
+}
+
+body.dark-mode .close-badge {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .close-badge:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .daily-report {
+  background-color: #2b2b1f; /* Dark warm color */
+  border-left-color: #f1c40f; /* Brighter yellow for contrast */
+}
+
+body.dark-mode .close-report {
+  background-color: rgba(255,255,255,0.1);
+}
+
+body.dark-mode .close-report:hover {
+  background-color: rgba(255,255,255,0.2);
+}
+
+body.dark-mode .highlight-text {
+  background-color: rgba(241, 196, 15, 0.2);
+}
+
+body.dark-mode input[type="checkbox"] {
+  background-color: #333;
+  border-color: #555;
+}
+
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3 {
+  color: #64b5f6; /* Light blue for headings */
+}
+
+body.dark-mode strong {
+  color: #64b5f6; /* Light blue for emphasized text */
 }
 
 /* Responsive Design */
@@ -462,189 +840,11 @@ body.dark-mode .quote-box {
     top: 10px;
     right: 10px;
   }
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideDown {
-  from { 
-    max-height: 0; 
-    opacity: 0;
-    transform: translateY(-20px);
+  
+  .easter-egg {
+    bottom: 60px; /* Adjust to avoid overlap with collapsed floating widget */
+    max-width: 200px;
   }
-  to { 
-    max-height: 1000px; 
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  from { 
-    max-height: 1000px;
-    opacity: 1;
-  }
-  to { 
-    max-height: 0;
-    opacity: 0;
-  }
-}
-
-.content-section {
-  animation: fadeIn 0.8s ease-in-out;
-}
-
-/* Accessibility */
-*:focus {
-  outline: 3px solid var(--secondary-color);
-  outline-offset: 3px;
-}
-
-.active-section {
-  border-left: 8px solid var(--success-color);
-  transition: border-left-color 0.3s;
-}
-
-.highlight-text {
-  background-color: #fff8e0; /* Light yellow */
-  padding: 0 3px;
-  border-radius: 2px;
-}
-
-/* Special Elements */
-.quote-box {
-  background-color: #f7fbff; /* Very light blue background */
-  border-left: 5px solid var(--accent-color);
-  padding: 16px;
-  margin: 20px 0;
-  font-style: italic;
-  border-radius: 5px;
-  color: var(--text-color);
-  font-size: 1.05rem;
-  line-height: 1.6;
-}
-
-.progress-container {
-  height: 12px;
-  width: 100%;
-  background-color: #f1f1f1;
-  border-radius: 10px;
-  margin: 10px 0;
-  overflow: hidden;
-}
-
-.progress-bar {
-  height: 100%;
-  background-color: var(--success-color);
-  border-radius: 10px;
-  width: 0%;
-  transition: width 0.5s;
-}
-
-/* Add some hover effects for interactive elements */
-a, button, .checklist-item, .info-tooltip {
-  transition: all 0.3s ease;
-}
-
-/* Customized checkbox style */
-input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  height: 25px;
-  width: 25px;
-  background-color: white;
-  border: 2px solid var(--border-color);
-  border-radius: 5px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-input[type="checkbox"]:checked {
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
-}
-
-input[type="checkbox"]:checked::after {
-  content: "\f00c";
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  color: white;
-  font-size: 14px;
-}
-
-/* Add to Home Screen Prompt */
-.home-screen-prompt {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: var(--card-color);
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  max-width: 320px;
-  width: 90%;
-  border: 2px solid var(--accent-color);
-  animation: slideUp 0.5s ease-out;
-}
-
-.prompt-content {
-  padding: 15px;
-  text-align: center;
-}
-
-.prompt-content i {
-  font-size: 2rem;
-  color: var(--accent-color);
-  margin-bottom: 10px;
-}
-
-.prompt-instructions {
-  margin: 10px 0;
-  font-size: 0.9em;
-  color: var(--text-color);
-}
-
-#close-prompt {
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 8px 20px;
-  margin-top: 10px;
-  cursor: pointer;
-  font-size: 0.95em;
-  transition: background-color 0.2s;
-}
-
-#close-prompt:hover {
-  background-color: var(--secondary-color);
-}
-
-@keyframes slideUp {
-  0% { transform: translate(-50%, 100px); opacity: 0; }
-  100% { transform: translate(-50%, 0); opacity: 1; }
-}
-
-/* PWA-specific styling */
-.pwa-mode .floating-widget {
-  bottom: 0;
-  border-radius: 0;
-  width: 100%;
-}
-
-.pwa-mode .mode-toggle {
-  top: 10px;
-}
-
-.pwa-mode header {
-  padding-top: 12px;
 }
 
 /* Samsung Galaxy optimizations */
@@ -694,59 +894,6 @@ input[type="checkbox"]:checked::after {
   }
 }
 
-/* Offline indicator */
-.offline-indicator {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background-color: var(--error-color);
-  color: white;
-  text-align: center;
-  padding: 8px;
-  font-size: 0.9rem;
-  z-index: 1000;
-  transform: translateY(-100%);
-  transition: transform 0.3s ease;
-}
-
-.offline-indicator.show {
-  transform: translateY(0);
-}
-
-.offline-indicator i {
-  margin-right: 5px;
-}
-
-/* Dark mode improvements for Samsung AMOLED screens */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-color: #000000; /* True black */
-    --card-color: #121212; /* Very dark gray */
-    --border-color: #333333; /* Dark borders */
-    --text-color: #ffffff; /* Pure white text for maximum contrast */
-    --quiet-text-color: #aecef5; /* Lighter blue-gray */
-  }
-  
-  .achievement-badge {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  }
-  
-  /* Improve text on dark backgrounds */
-  h1, h2, h3 {
-    color: #64b5f6; /* Light blue for headings */
-  }
-  
-  /* Additional contrast improvements */
-  .card-toggle {
-    color: #64b5f6; /* Light blue for better visibility */
-  }
-  
-  strong {
-    color: #64b5f6; /* Light blue for emphasized text */
-  }
-}
-
 /* Battery saving mode */
 .battery-saving-mode {
   --primary-color: #111111;
@@ -773,58 +920,30 @@ input[type="checkbox"]:checked::after {
   transition: none;
 }
 
-/* Daily Progress Report styling */
-.daily-report {
-  background-color: #fff7e6; /* Light warm color */
-  border-left-color: #f39c12; /* Orange-yellow */
-  animation: slideDown 0.5s ease-in-out;
-  position: relative;
-  overflow: hidden;
-  transition: opacity 0.5s, transform 0.5s;
+/* Dark mode optimizations for Samsung AMOLED screens */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #000000; /* True black */
+    --card-color: #121212; /* Very dark gray */
+    --border-color: #333333; /* Dark borders */
+    --text-color: #ffffff; /* Pure white text for maximum contrast */
+    --quiet-text-color: #aecef5; /* Lighter blue-gray */
+  }
 }
 
-body.dark-mode .daily-report {
-  background-color: #2b2b1f; /* Dark warm color */
-  border-left-color: #f1c40f; /* Brighter yellow for contrast */
+/* PWA-specific styling */
+.pwa-mode .floating-widget {
+  bottom: 0;
+  border-radius: 0;
+  width: 100%;
 }
 
-.daily-report:before {
-  content: '🌅';
-  position: absolute;
+.pwa-mode .mode-toggle {
   top: 10px;
-  right: 15px;
-  font-size: 1.5rem;
-  opacity: 0.3;
 }
 
-.close-report {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  background-color: rgba(0,0,0,0.1);
-  color: var(--text-color);
-  transition: all 0.2s;
-  z-index: 1;
-}
-
-.close-report:hover {
-  background-color: rgba(0,0,0,0.2);
-}
-
-body.dark-mode .close-report {
-  background-color: rgba(255,255,255,0.1);
-}
-
-body.dark-mode .close-report:hover {
-  background-color: rgba(255,255,255,0.2);
+.pwa-mode header {
+  padding-top: 12px;
 }
 
 /* Fix input fields for dark mode */
@@ -835,10 +954,5 @@ textarea {
   border: 1px solid var(--border-color);
   padding: 10px;
   border-radius: 5px;
-}
-
-body.dark-mode input[type="text"],
-body.dark-mode textarea {
-  background-color: #2a2a2a;
-  color: #ecf0f1;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
 }

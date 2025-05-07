@@ -7,6 +7,11 @@
   "background_color": "#0e766e",
   "theme_color": "#0e766e",
   "orientation": "portrait",
+  "categories": ["health", "medical", "lifestyle"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "scope": "/",
   "icons": [
     {
       "src": "assets/icon-192.png",
@@ -21,16 +26,44 @@
       "purpose": "any maskable"
     }
   ],
+  "screenshots": [
+    {
+      "src": "assets/screenshot-1.png",
+      "type": "image/png",
+      "sizes": "1280x720",
+      "platform": "wide",
+      "label": "Kidney Fix-It Plan Dashboard"
+    },
+    {
+      "src": "assets/screenshot-2.png",
+      "type": "image/png",
+      "sizes": "750x1334",
+      "platform": "narrow",
+      "label": "Mobile view of daily checklist"
+    }
+  ],
   "shortcuts": [
     {
       "name": "Daily Checklist",
       "url": "./index.html#daily-check",
-      "description": "Go directly to your daily checklist"
+      "description": "Go directly to your daily checklist",
+      "icons": [
+        {
+          "src": "assets/icon-checklist-96.png",
+          "sizes": "96x96"
+        }
+      ]
     },
     {
       "name": "Shopping Guide",
       "url": "./index.html#shopping-section",
-      "description": "Find where to get kidney-friendly products"
+      "description": "Find where to get kidney-friendly products",
+      "icons": [
+        {
+          "src": "assets/icon-shopping-96.png",
+          "sizes": "96x96"
+        }
+      ]
     }
   ]
 } 

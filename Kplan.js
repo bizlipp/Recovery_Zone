@@ -1,31 +1,37 @@
-// DOM Elements
-const storySection = document.getElementById('story-section');
-const toolkitSection = document.getElementById('toolkit-section');
-const routineSection = document.getElementById('routine-section');
-const checklistContainer = document.getElementById('checklist-container');
-const streakCount = document.getElementById('streak-count');
-const streakMessage = document.getElementById('streak-message');
-const increaseTextBtn = document.getElementById('increase-text');
-const decreaseTextBtn = document.getElementById('decrease-text');
-const readAloudBtn = document.getElementById('read-aloud');
-const stopReadingBtn = document.getElementById('stop-reading');
-const modeToggle = document.getElementById('mode-toggle');
-const floatingStreakCount = document.getElementById('floating-streak-count');
-const completedCount = document.getElementById('completed-count');
-const totalCount = document.getElementById('total-count');
-const progressBar = document.getElementById('progress-bar');
-const markAllDoneBtn = document.getElementById('mark-all-done');
-const easterEgg = document.getElementById('easter-egg');
+/**
+ * Kidney Fix-It Plan - Main JavaScript
+ * Handles UI interactions, persistence, and user interface functionality
+ */
 
-// Card toggle elements
-const cardToggles = document.querySelectorAll('.card-toggle');
-
-// State Management
-let currentFontSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--text-size-base'));
-let speechSynthesis = window.speechSynthesis;
-let currentUtterance = null;
-let isReading = false;
-let isDarkMode = false;
+// ======= Configuration & Constants =======
+const CONFIG = {
+  storageKeys: {
+    fontSizePreference: 'fontSizePreference',
+    checklistData: 'checklistData',
+    collapsedSections: 'collapsedSections',
+    visitCount: 'visitCount',
+    homeScreenPromptShown: 'homeScreenPromptShown',
+    lastViewedDate: 'lastViewedDate',
+    acknowledgedAchievements: 'acknowledgedAchievements',
+    streakCount: 'streakCount',
+    darkMode: 'darkMode',
+    widgetCollapsed: 'widgetCollapsed'
+  },
+  fontSizes: {
+    min: 16,
+    max: 28,
+    step: 2,
+    default: 18
+  },
+  easterEggDisplayTime: 8000,
+  checklistItems: [
+    { id: 'water', text: 'Drank extra water today', info: 'Every glass of water helps your kidneys filter better. Try for 6-8 glasses.' },
+    { id: 'walk', text: 'Took a short walk', info: 'Even 5 minutes of walking improves blood flow to your kidneys.' },
+    { id: 'tea', text: 'Had a cup of kidney-supporting tea', info: 'Nettle, corn silk, or dandelion tea all help your kidneys work better.' },
+    { id: 'salt', text: 'Went easy on the salt today', info: 'Less salt means less work for your kidneys to filter it out.' },
+    { id: 'rest', text: 'Took time to rest', info: 'Rest lets your body repair itself, especially your kidneys.' }
+  ]
+};
 
 // List of friendly easter egg messages
 const easterEggMessages = [
@@ -72,7 +78,39 @@ const milestoneMessages = {
   }
 };
 
-// Load saved data
+// ======= DOM Elements =======
+const elements = {
+  storySection: document.getElementById('story-section'),
+  toolkitSection: document.getElementById('toolkit-section'),
+  routineSection: document.getElementById('routine-section'),
+  checklistContainer: document.getElementById('checklist-container'),
+  streakCount: document.getElementById('streak-count'),
+  streakMessage: document.getElementById('streak-message'),
+  increaseTextBtn: document.getElementById('increase-text'),
+  decreaseTextBtn: document.getElementById('decrease-text'),
+  readAloudBtn: document.getElementById('read-aloud'),
+  stopReadingBtn: document.getElementById('stop-reading'),
+  modeToggle: document.getElementById('mode-toggle'),
+  floatingStreakCount: document.getElementById('floating-streak-count'),
+  completedCount: document.getElementById('completed-count'),
+  totalCount: document.getElementById('total-count'),
+  progressBar: document.getElementById('progress-bar'),
+  markAllDoneBtn: document.getElementById('mark-all-done'),
+  easterEgg: document.getElementById('easter-egg'),
+  widgetHint: document.getElementById('widget-hint'),
+  cardToggles: document.querySelectorAll('.card-toggle')
+};
+
+// ======= State Management =======
+let state = {
+  currentFontSize: parseInt(getComputedStyle(document.documentElement).getPropertyValue('--text-size-base')),
+  speechSynthesis: window.speechSynthesis,
+  currentUtterance: null,
+  isReading: false,
+  isDarkMode: false
+};
+
+// ======= Initialization =======
 document.addEventListener('DOMContentLoaded', function() {
   loadLocalStorage();
   showDailyProgressReport();
@@ -85,11 +123,47 @@ document.addEventListener('DOMContentLoaded', function() {
   updateFloatingWidget();
   setupMarkAllDone();
   scheduleRandomEasterEgg();
+  initCollapsingWidget();
+  
+  // Setup service worker update handling
+  setupServiceWorkerUpdates();
 });
 
-// Card Toggle Functionality
+// ======= Service Worker Handling =======
+function setupServiceWorkerUpdates() {
+  if ('serviceWorker' in navigator) {
+    // Listen for messages from service worker
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
+        const updateNotification = document.createElement('div');
+        updateNotification.className = 'update-notification';
+        updateNotification.innerHTML = `
+          <p>A new version is available! Refresh to update.</p>
+          <button id="update-now">Update Now</button>
+          <button id="update-later">Later</button>
+        `;
+        document.body.appendChild(updateNotification);
+        
+        // Handle update now button
+        document.getElementById('update-now').addEventListener('click', () => {
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+            window.location.reload();
+          }
+        });
+        
+        // Handle later button
+        document.getElementById('update-later').addEventListener('click', () => {
+          updateNotification.remove();
+        });
+      }
+    });
+  }
+}
+
+// ======= Card Toggle Functionality =======
 function initCardToggles() {
-  cardToggles.forEach(toggle => {
+  elements.cardToggles.forEach(toggle => {
     toggle.addEventListener('click', function() {
       const section = this.closest('.content-section');
       const toggleText = this.querySelector('.toggle-text');
@@ -109,7 +183,7 @@ function initCardToggles() {
 
       // Save state to localStorage
       const sectionId = section.id;
-      const collapsedSections = JSON.parse(localStorage.getItem('collapsedSections') || '[]');
+      const collapsedSections = JSON.parse(localStorage.getItem(CONFIG.storageKeys.collapsedSections) || '[]');
       
       if (section.classList.contains('card-collapsed')) {
         if (!collapsedSections.includes(sectionId)) {
@@ -122,20 +196,20 @@ function initCardToggles() {
         }
       }
       
-      localStorage.setItem('collapsedSections', JSON.stringify(collapsedSections));
+      localStorage.setItem(CONFIG.storageKeys.collapsedSections, JSON.stringify(collapsedSections));
     });
   });
 }
 
-// Dark Mode Toggle
+// ======= Dark Mode Toggle =======
 function initDarkModeToggle() {
-  modeToggle.addEventListener('click', function() {
+  elements.modeToggle.addEventListener('click', function() {
     document.body.classList.toggle('dark-mode');
-    isDarkMode = document.body.classList.contains('dark-mode');
+    state.isDarkMode = document.body.classList.contains('dark-mode');
     
     // Update icon
     const icon = this.querySelector('i');
-    if (isDarkMode) {
+    if (state.isDarkMode) {
       icon.classList.remove('fa-moon');
       icon.classList.add('fa-sun');
     } else {
@@ -144,22 +218,80 @@ function initDarkModeToggle() {
     }
     
     // Save preference
-    localStorage.setItem('darkMode', isDarkMode);
+    localStorage.setItem(CONFIG.storageKeys.darkMode, state.isDarkMode);
   });
   
   // Apply saved preference
-  if (localStorage.getItem('darkMode') === 'true') {
+  if (localStorage.getItem(CONFIG.storageKeys.darkMode) === 'true') {
     document.body.classList.add('dark-mode');
-    const icon = modeToggle.querySelector('i');
+    const icon = elements.modeToggle.querySelector('i');
     icon.classList.remove('fa-moon');
     icon.classList.add('fa-sun');
-    isDarkMode = true;
+    state.isDarkMode = true;
   }
 }
 
-// Mark All Done button functionality
+// ======= Collapsible Widget =======
+function initCollapsingWidget() {
+  const floatingWidget = document.querySelector('.floating-widget');
+  const widgetStreak = document.querySelector('.widget-streak');
+  
+  // Check if user has previously collapsed the widget
+  const isCollapsed = localStorage.getItem(CONFIG.storageKeys.widgetCollapsed) === 'true';
+  if (isCollapsed) {
+    floatingWidget.classList.add('collapsed');
+    elements.widgetHint.textContent = '(tap to expand)';
+  } else {
+    elements.widgetHint.textContent = '(tap to collapse)';
+  }
+  
+  // Toggle collapsed state when streak section is clicked
+  widgetStreak.addEventListener('click', function() {
+    floatingWidget.classList.toggle('collapsed');
+    
+    // Update hint text based on new state
+    if (floatingWidget.classList.contains('collapsed')) {
+      elements.widgetHint.textContent = '(tap to expand)';
+    } else {
+      elements.widgetHint.textContent = '(tap to collapse)';
+    }
+    
+    // Save state in localStorage
+    localStorage.setItem(CONFIG.storageKeys.widgetCollapsed, floatingWidget.classList.contains('collapsed'));
+  });
+  
+  // When any action button is clicked, expand the widget fully
+  elements.markAllDoneBtn.addEventListener('click', function() {
+    floatingWidget.classList.remove('collapsed');
+    elements.widgetHint.textContent = '(tap to collapse)';
+    localStorage.setItem(CONFIG.storageKeys.widgetCollapsed, 'false');
+  });
+  
+  // Double tap anywhere on widget to toggle
+  let lastTap = 0;
+  floatingWidget.addEventListener('touchend', function(e) {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap;
+    if (tapLength < 300 && tapLength > 0) {
+      floatingWidget.classList.toggle('collapsed');
+      
+      // Update hint text based on new state
+      if (floatingWidget.classList.contains('collapsed')) {
+        elements.widgetHint.textContent = '(tap to expand)';
+      } else {
+        elements.widgetHint.textContent = '(tap to collapse)';
+      }
+      
+      localStorage.setItem(CONFIG.storageKeys.widgetCollapsed, floatingWidget.classList.contains('collapsed'));
+      e.preventDefault();
+    }
+    lastTap = currentTime;
+  });
+}
+
+// ======= Mark All Done button =======
 function setupMarkAllDone() {
-  markAllDoneBtn.addEventListener('click', function() {
+  elements.markAllDoneBtn.addEventListener('click', function() {
     const checkboxes = document.querySelectorAll('#checklist-container input[type="checkbox"]');
     
     checkboxes.forEach(checkbox => {
@@ -177,9 +309,7 @@ function setupMarkAllDone() {
     });
     
     // Play satisfying sound
-    const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3');
-    audio.volume = 0.3;
-    audio.play();
+    playSound('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3', 0.3);
     
     // Update counts
     updateStreakCount();
@@ -195,14 +325,15 @@ function setupMarkAllDone() {
   });
 }
 
-// Random Easter Egg
+// ======= Random Easter Egg Handling =======
 function scheduleRandomEasterEgg() {
   // Show first easter egg after 30 seconds
   setTimeout(function() {
     showRandomEasterEgg();
     
     // Then schedule random appearances
-    setInterval(showRandomEasterEgg, Math.floor(Math.random() * (10 * 60 * 1000)) + (5 * 60 * 1000)); // Between 5-15 minutes
+    setInterval(showRandomEasterEgg, 
+      Math.floor(Math.random() * (10 * 60 * 1000)) + (5 * 60 * 1000)); // Between 5-15 minutes
   }, 30 * 1000);
 }
 
@@ -212,35 +343,129 @@ function showRandomEasterEgg() {
 }
 
 function showEasterEgg(message) {
-  easterEgg.textContent = message;
-  easterEgg.classList.add('show');
+  elements.easterEgg.textContent = message;
+  elements.easterEgg.classList.add('show');
   
   setTimeout(() => {
-    easterEgg.classList.remove('show');
-  }, 8000); // Show for 8 seconds
+    elements.easterEgg.classList.remove('show');
+  }, CONFIG.easterEggDisplayTime);
 }
 
-// Local Storage Functions
+// ======= Utility Functions =======
+/**
+ * Plays a sound with the specified volume
+ * @param {string} url - URL of the sound file to play
+ * @param {number} volume - Volume level (0.0 to 1.0)
+ */
+function playSound(url, volume = 1.0) {
+  try {
+    const audio = new Audio(url);
+    audio.volume = volume;
+    return audio.play();
+  } catch (error) {
+    console.warn('Error playing sound:', error);
+    return Promise.reject(error);
+  }
+}
+
+/**
+ * Gets a random item from an array
+ * @param {Array} array - The array to get a random item from
+ * @returns {*} A random item from the array
+ */
+function getRandomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+/**
+ * Gets today's date in ISO format (YYYY-MM-DD)
+ * @returns {string} Today's date in ISO format
+ */
+function getTodayDateString() {
+  return new Date().toISOString().split('T')[0];
+}
+
+/**
+ * Safely parses JSON from localStorage with a fallback value
+ * @param {string} key - The localStorage key to retrieve
+ * @param {*} fallback - The fallback value if the key doesn't exist or parsing fails
+ * @returns {*} The parsed value or fallback
+ */
+function getFromStorage(key, fallback) {
+  try {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
+  } catch (error) {
+    console.warn(`Error parsing localStorage key '${key}':`, error);
+    return fallback;
+  }
+}
+
+/**
+ * Safely saves a value to localStorage
+ * @param {string} key - The localStorage key to save to
+ * @param {*} value - The value to save (will be JSON stringified)
+ * @returns {boolean} True if successful, false if not
+ */
+function saveToStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
+  } catch (error) {
+    console.error(`Error saving to localStorage key '${key}':`, error);
+    return false;
+  }
+}
+
+// ======= Scroll Tracking =======
+document.addEventListener('scroll', function() {
+  const sections = document.querySelectorAll('.content-section');
+  let currentActiveSection = null;
+  let smallestDistance = Infinity;
+  
+  sections.forEach(section => {
+    // Skip collapsed sections
+    if (section.classList.contains('card-collapsed')) return;
+    
+    const rect = section.getBoundingClientRect();
+    const distance = Math.abs(rect.top);
+    
+    if (distance < smallestDistance) {
+      smallestDistance = distance;
+      currentActiveSection = section;
+    }
+    
+    // Remove active class from all sections
+    section.classList.remove('active-section');
+  });
+  
+  // Add active class to the current section
+  if (currentActiveSection) {
+    currentActiveSection.classList.add('active-section');
+  }
+});
+
+// ======= Local Storage Functions =======
 function loadLocalStorage() {
   // Load font size preference
-  const savedFontSize = localStorage.getItem('fontSizePreference');
+  const savedFontSize = localStorage.getItem(CONFIG.storageKeys.fontSizePreference);
   if (savedFontSize) {
-    currentFontSize = parseInt(savedFontSize);
-    document.documentElement.style.setProperty('--text-size-base', `${currentFontSize}px`);
+    state.currentFontSize = parseInt(savedFontSize);
+    document.documentElement.style.setProperty('--text-size-base', `${state.currentFontSize}px`);
   }
   
   // Load checklist data for today
-  const today = new Date().toISOString().split('T')[0];
-  const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+  const today = getTodayDateString();
+  const checklistData = getFromStorage(CONFIG.storageKeys.checklistData, {});
   
   // Initialize today's data if not exists
   if (!checklistData[today]) {
     checklistData[today] = {};
-    localStorage.setItem('checklistData', JSON.stringify(checklistData));
+    saveToStorage(CONFIG.storageKeys.checklistData, checklistData);
   }
   
   // Load collapsed sections
-  const collapsedSections = JSON.parse(localStorage.getItem('collapsedSections') || '[]');
+  const collapsedSections = getFromStorage(CONFIG.storageKeys.collapsedSections, []);
   setTimeout(() => {
     collapsedSections.forEach(sectionId => {
       const section = document.getElementById(sectionId);
@@ -291,15 +516,15 @@ function checkForSpecialDayMessages() {
 }
 
 function saveChecklistItem(id, isChecked) {
-  const today = new Date().toISOString().split('T')[0];
-  const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+  const today = getTodayDateString();
+  const checklistData = getFromStorage(CONFIG.storageKeys.checklistData, {});
   
   if (!checklistData[today]) {
     checklistData[today] = {};
   }
   
   checklistData[today][id] = isChecked;
-  localStorage.setItem('checklistData', JSON.stringify(checklistData));
+  saveToStorage(CONFIG.storageKeys.checklistData, checklistData);
   
   updateStreakCount();
   updateFloatingWidget();
@@ -310,13 +535,13 @@ function saveChecklistItem(id, isChecked) {
 
 // Check for progress-based messages (halfway, almost done, etc.)
 function checkForProgressMessage() {
-  const today = new Date().toISOString().split('T')[0];
-  const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+  const today = getTodayDateString();
+  const checklistData = getFromStorage(CONFIG.storageKeys.checklistData, {});
   const todayData = checklistData[today] || {};
   
   // Count completed items
   const completed = Object.values(todayData).filter(value => value === true).length;
-  const total = document.querySelectorAll('#checklist-container .checklist-item').length;
+  const total = CONFIG.checklistItems.length;
   
   // First item done
   if (completed === 1) {
@@ -338,7 +563,7 @@ function checkForProgressMessage() {
 
 // Check for milestone based on total completed days
 function checkCompletedDaysMilestone() {
-  const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+  const checklistData = getFromStorage(CONFIG.storageKeys.checklistData, {});
   
   // Count days with at least one completed task
   const completedDays = Object.keys(checklistData).filter(date => {
@@ -355,37 +580,37 @@ function checkCompletedDaysMilestone() {
 
 // Update floating widget with current progress
 function updateFloatingWidget() {
-  const today = new Date().toISOString().split('T')[0];
-  const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+  const today = getTodayDateString();
+  const checklistData = getFromStorage(CONFIG.storageKeys.checklistData, {});
   const todayData = checklistData[today] || {};
   
   // Count completed items
   const completed = Object.values(todayData).filter(value => value === true).length;
-  const total = document.querySelectorAll('#checklist-container .checklist-item').length;
+  const total = CONFIG.checklistItems.length;
   
   // Update UI
-  completedCount.textContent = completed;
-  totalCount.textContent = total;
-  floatingStreakCount.textContent = streakCount.textContent;
+  elements.completedCount.textContent = completed;
+  elements.totalCount.textContent = total;
+  elements.floatingStreakCount.textContent = elements.streakCount.textContent;
   
   // Update progress bar
   const percentage = total > 0 ? (completed / total) * 100 : 0;
-  progressBar.style.width = `${percentage}%`;
+  elements.progressBar.style.width = `${percentage}%`;
   
   // If all done, update button state
   if (completed === total && total > 0) {
-    markAllDoneBtn.textContent = "All Done Today!";
-    markAllDoneBtn.disabled = true;
+    elements.markAllDoneBtn.textContent = "All Done Today!";
+    elements.markAllDoneBtn.disabled = true;
   } else {
-    markAllDoneBtn.textContent = "Mark Today Complete";
-    markAllDoneBtn.disabled = false;
+    elements.markAllDoneBtn.textContent = "Mark Today Complete";
+    elements.markAllDoneBtn.disabled = false;
   }
 }
 
-// Content Population
+// ======= Content Population =======
 function populateSections() {
   // Story Section - Content is now in the card-content div
-  const storyContent = storySection.querySelector('.card-content');
+  const storyContent = elements.storySection.querySelector('.card-content');
   storyContent.innerHTML = `
     <div class="quote-box">
       The engine's running hotter now, and the filter's starting to clog.
@@ -402,7 +627,7 @@ function populateSections() {
 `;
 
 // Toolkit Section
-  const toolkitContent = toolkitSection.querySelector('.card-content');
+  const toolkitContent = elements.toolkitSection.querySelector('.card-content');
   toolkitContent.innerHTML = `
     <ul>
       <li><strong><i class="fas fa-fire icon"></i> Castor Oil Packs</strong> – Warm oil on a cloth, place over lower back 3x/week, helps blood flow and healing.</li>
@@ -421,7 +646,7 @@ function populateSections() {
 `;
 
 // Routine Section
-  const routineContent = routineSection.querySelector('.card-content');
+  const routineContent = elements.routineSection.querySelector('.card-content');
   routineContent.innerHTML = `
     <h3><i class="fas fa-sun icon"></i> Morning</h3>
   <ul>
@@ -445,26 +670,17 @@ function populateSections() {
 }
 
 function populateChecklist() {
-  // Define checklist items
-  const checklistItems = [
-    { id: 'water', text: 'Drank extra water today', info: 'Every glass of water helps your kidneys filter better. Try for 6-8 glasses.' },
-    { id: 'walk', text: 'Took a short walk', info: 'Even 5 minutes of walking improves blood flow to your kidneys.' },
-    { id: 'tea', text: 'Had a cup of kidney-supporting tea', info: 'Nettle, corn silk, or dandelion tea all help your kidneys work better.' },
-    { id: 'salt', text: 'Went easy on the salt today', info: 'Less salt means less work for your kidneys to filter it out.' },
-    { id: 'rest', text: 'Took time to rest', info: 'Rest lets your body repair itself, especially your kidneys.' }
-  ];
-  
   // Set the total items on the page
-  totalCount.textContent = checklistItems.length;
+  elements.totalCount.textContent = CONFIG.checklistItems.length;
   
   // Get today's saved data
-  const today = new Date().toISOString().split('T')[0];
-  const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+  const today = getTodayDateString();
+  const checklistData = getFromStorage(CONFIG.storageKeys.checklistData, {});
   const todayData = checklistData[today] || {};
   
   // Generate checklist HTML
-  checklistContainer.innerHTML = '';
-  checklistItems.forEach(item => {
+  elements.checklistContainer.innerHTML = '';
+  CONFIG.checklistItems.forEach(item => {
     const isChecked = todayData[item.id] === true;
     
     const itemElement = document.createElement('div');
@@ -476,7 +692,7 @@ function populateChecklist() {
       <div class="info-tooltip">${item.info}</div>
     `;
     
-    checklistContainer.appendChild(itemElement);
+    elements.checklistContainer.appendChild(itemElement);
     
     // Add event listeners
     const checkbox = itemElement.querySelector(`#${item.id}`);
@@ -485,9 +701,7 @@ function populateChecklist() {
       
       // Add satisfaction feedback
       if (this.checked) {
-        const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3');
-        audio.volume = 0.3;
-        audio.play();
+        playSound('https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3', 0.3);
         
         itemElement.style.backgroundColor = 'rgba(232, 248, 245, 0.5)';
         setTimeout(() => {
@@ -513,7 +727,7 @@ function populateChecklist() {
 }
 
 function updateStreakCount() {
-  const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+  const checklistData = getFromStorage(CONFIG.storageKeys.checklistData, {});
   let currentStreak = 0;
   let today = new Date();
   
@@ -532,13 +746,16 @@ function updateStreakCount() {
   }
   
   // Update the UI
-  streakCount.textContent = currentStreak;
-  floatingStreakCount.textContent = currentStreak;
+  elements.streakCount.textContent = currentStreak;
+  elements.floatingStreakCount.textContent = currentStreak;
+  
+  // Save streak in localStorage for report usage
+  saveToStorage(CONFIG.storageKeys.streakCount, currentStreak);
   
   // Check for milestone streak achievements and display special messages
   const milestoneMessage = milestoneMessages.streaks[currentStreak];
   if (milestoneMessage) {
-    streakMessage.textContent = milestoneMessage;
+    elements.streakMessage.textContent = milestoneMessage;
     // Also show as an easter egg for important milestones
     if ([7, 30, 100, 365].includes(currentStreak)) {
       showEasterEgg(milestoneMessage);
@@ -546,50 +763,50 @@ function updateStreakCount() {
   } else {
     // Default messages when not at specific milestone
     if (currentStreak === 0) {
-      streakMessage.textContent = "Today's a great day to start taking care of yourself.";
+      elements.streakMessage.textContent = "Today's a great day to start taking care of yourself.";
     } else if (currentStreak < 3) {
-      streakMessage.textContent = "You're getting started! Keep it up.";
+      elements.streakMessage.textContent = "You're getting started! Keep it up.";
     } else if (currentStreak < 7) {
-      streakMessage.textContent = "You're building momentum! Your kidneys thank you.";
+      elements.streakMessage.textContent = "You're building momentum! Your kidneys thank you.";
     } else if (currentStreak < 14) {
-      streakMessage.textContent = "Over a week of consistent care - that's impressive!";
+      elements.streakMessage.textContent = "Over a week of consistent care - that's impressive!";
     } else if (currentStreak < 30) {
-      streakMessage.textContent = "Several weeks strong! You're making real changes that matter.";
+      elements.streakMessage.textContent = "Several weeks strong! You're making real changes that matter.";
     } else if (currentStreak < 60) {
-      streakMessage.textContent = "Over a month of daily care - your body notices the difference.";
+      elements.streakMessage.textContent = "Over a month of daily care - your body notices the difference.";
     } else if (currentStreak < 90) {
-      streakMessage.textContent = "Almost three months of this new habit. That's real commitment.";
+      elements.streakMessage.textContent = "Almost three months of this new habit. That's real commitment.";
     } else {
-      streakMessage.textContent = "What an incredible streak! Your consistency is inspiring.";
+      elements.streakMessage.textContent = "What an incredible streak! Your consistency is inspiring.";
     }
   }
 }
 
-// Accessibility Controls
+// ======= Accessibility Controls =======
 function initAccessibilityControls() {
   // Text size controls
-  increaseTextBtn.addEventListener('click', function() {
-    if (currentFontSize < 28) { // Max size limit
-      currentFontSize += 2;
-      document.documentElement.style.setProperty('--text-size-base', `${currentFontSize}px`);
-      localStorage.setItem('fontSizePreference', currentFontSize);
+  elements.increaseTextBtn.addEventListener('click', function() {
+    if (state.currentFontSize < CONFIG.fontSizes.max) {
+      state.currentFontSize += CONFIG.fontSizes.step;
+      document.documentElement.style.setProperty('--text-size-base', `${state.currentFontSize}px`);
+      localStorage.setItem(CONFIG.storageKeys.fontSizePreference, state.currentFontSize);
     }
   });
   
-  decreaseTextBtn.addEventListener('click', function() {
-    if (currentFontSize > 16) { // Min size limit
-      currentFontSize -= 2;
-      document.documentElement.style.setProperty('--text-size-base', `${currentFontSize}px`);
-      localStorage.setItem('fontSizePreference', currentFontSize);
+  elements.decreaseTextBtn.addEventListener('click', function() {
+    if (state.currentFontSize > CONFIG.fontSizes.min) {
+      state.currentFontSize -= CONFIG.fontSizes.step;
+      document.documentElement.style.setProperty('--text-size-base', `${state.currentFontSize}px`);
+      localStorage.setItem(CONFIG.storageKeys.fontSizePreference, state.currentFontSize);
     }
   });
   
   // Read aloud functionality
-  readAloudBtn.addEventListener('click', function() {
-    if (isReading) return;
+  elements.readAloudBtn.addEventListener('click', function() {
+    if (state.isReading) return;
     
     // Stop any current speech
-    speechSynthesis.cancel();
+    state.speechSynthesis.cancel();
     
     // Collect content from visible sections
     let textToRead = [];
@@ -604,18 +821,18 @@ function initAccessibilityControls() {
     // If no visible sections, read a message
     if (fullText.trim() === '') {
       const message = "Please open a section to read its content aloud.";
-      currentUtterance = new SpeechSynthesisUtterance(message);
-      speechSynthesis.speak(currentUtterance);
+      state.currentUtterance = new SpeechSynthesisUtterance(message);
+      state.speechSynthesis.speak(state.currentUtterance);
       return;
     }
     
     // Create and configure utterance
-    currentUtterance = new SpeechSynthesisUtterance(fullText);
-    currentUtterance.rate = 0.9; // Slightly slower
-    currentUtterance.pitch = 1;
+    state.currentUtterance = new SpeechSynthesisUtterance(fullText);
+    state.currentUtterance.rate = 0.9; // Slightly slower
+    state.currentUtterance.pitch = 1;
     
     // Get available voices and select a good one
-    let voices = speechSynthesis.getVoices();
+    let voices = state.speechSynthesis.getVoices();
     if (voices.length > 0) {
       // Try to find a male voice
       const maleVoice = voices.find(voice => 
@@ -626,71 +843,43 @@ function initAccessibilityControls() {
       );
       
       if (maleVoice) {
-        currentUtterance.voice = maleVoice;
+        state.currentUtterance.voice = maleVoice;
       }
     }
     
     // Add events
-    currentUtterance.onstart = function() {
-      isReading = true;
-      readAloudBtn.style.display = 'none';
-      stopReadingBtn.style.display = 'inline-block';
+    state.currentUtterance.onstart = function() {
+      state.isReading = true;
+      elements.readAloudBtn.style.display = 'none';
+      elements.stopReadingBtn.style.display = 'inline-block';
     };
     
-    currentUtterance.onend = function() {
-      isReading = false;
-      readAloudBtn.style.display = 'inline-block';
-      stopReadingBtn.style.display = 'none';
+    state.currentUtterance.onend = function() {
+      state.isReading = false;
+      elements.readAloudBtn.style.display = 'inline-block';
+      elements.stopReadingBtn.style.display = 'none';
     };
     
     // Start speaking
-    speechSynthesis.speak(currentUtterance);
+    state.speechSynthesis.speak(state.currentUtterance);
   });
   
-  stopReadingBtn.addEventListener('click', function() {
-    speechSynthesis.cancel();
-    isReading = false;
-    readAloudBtn.style.display = 'inline-block';
-    stopReadingBtn.style.display = 'none';
+  elements.stopReadingBtn.addEventListener('click', function() {
+    state.speechSynthesis.cancel();
+    state.isReading = false;
+    elements.readAloudBtn.style.display = 'inline-block';
+    elements.stopReadingBtn.style.display = 'none';
   });
   
   // Initially hide stop button
-  stopReadingBtn.style.display = 'none';
+  elements.stopReadingBtn.style.display = 'none';
 }
 
-// Add active section tracking for better UI feedback
-document.addEventListener('scroll', function() {
-  const sections = document.querySelectorAll('.content-section');
-  let currentActiveSection = null;
-  let smallestDistance = Infinity;
-  
-  sections.forEach(section => {
-    // Skip collapsed sections
-    if (section.classList.contains('card-collapsed')) return;
-    
-    const rect = section.getBoundingClientRect();
-    const distance = Math.abs(rect.top);
-    
-    if (distance < smallestDistance) {
-      smallestDistance = distance;
-      currentActiveSection = section;
-    }
-    
-    // Remove active class from all sections
-    section.classList.remove('active-section');
-  });
-  
-  // Add active class to the current section
-  if (currentActiveSection) {
-    currentActiveSection.classList.add('active-section');
-  }
-});
-
-// Daily Progress Report
+// ======= Daily Progress Report =======
 function showDailyProgressReport() {
-  const today = new Date().toISOString().split('T')[0];
-  const lastViewedDate = localStorage.getItem('lastViewedDate');
-  const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+  const today = getTodayDateString();
+  const lastViewedDate = localStorage.getItem(CONFIG.storageKeys.lastViewedDate);
+  const checklistData = getFromStorage(CONFIG.storageKeys.checklistData, {});
 
   if (lastViewedDate === today) return; // Already viewed today
 
@@ -702,10 +891,10 @@ function showDailyProgressReport() {
   if (!yData) return;
 
   const completed = Object.values(yData).filter(v => v === true).length;
-  const total = 5; // adjust if dynamic
+  const total = CONFIG.checklistItems.length;
   const percent = Math.round((completed / total) * 100);
 
-  const streakData = parseInt(localStorage.getItem('streakCount') || '0');
+  const streakData = parseInt(localStorage.getItem(CONFIG.storageKeys.streakCount) || '0');
   
   // Get appropriate message based on completion and streak
   let message = '';
@@ -745,7 +934,7 @@ function showDailyProgressReport() {
   `;
 
   document.querySelector('main').prepend(report);
-  localStorage.setItem('lastViewedDate', today);
+  localStorage.setItem(CONFIG.storageKeys.lastViewedDate, today);
   
   // Add close button functionality
   const closeButton = report.querySelector('.close-report');
