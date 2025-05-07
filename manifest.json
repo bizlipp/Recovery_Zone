@@ -4,10 +4,10 @@
   "description": "A daily guide to kidney health with checklists and progress tracking",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0e766e",
-  "theme_color": "#0e766e",
+  "background_color": "#0e4b50",
+  "theme_color": "#0e4b50",
   "orientation": "portrait",
-  "categories": ["health", "medical", "lifestyle"],
+  "categories": ["health", "medical", "lifestyle", "wellness", "chronic-condition"],
   "lang": "en-US",
   "dir": "ltr",
   "prefer_related_applications": false,
@@ -24,6 +24,30 @@
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-48.png",
+      "type": "image/png",
+      "sizes": "48x48",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-72.png",
+      "type": "image/png",
+      "sizes": "72x72",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-96.png",
+      "type": "image/png",
+      "sizes": "96x96",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-144.png",
+      "type": "image/png",
+      "sizes": "144x144",
+      "purpose": "any"
     }
   ],
   "screenshots": [
@@ -64,6 +88,35 @@
           "sizes": "96x96"
         }
       ]
+    },
+    {
+      "name": "Progress Tracker",
+      "url": "./index.html#progress-section",
+      "description": "View your health progress",
+      "icons": [
+        {
+          "src": "assets/icon-progress-96.png",
+          "sizes": "96x96"
+        }
+      ]
     }
-  ]
+  ],
+  "related_applications": [],
+  "iarc_rating_id": "",
+  "protocol_handlers": [],
+  "serviceworker": {
+    "src": "./service-worker.js",
+    "scope": "./",
+    "update_via_cache": "none"
+  },
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
 } 

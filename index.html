@@ -3,9 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0e766e">
+  <meta name="theme-color" content="#0e4b50">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="description" content="A daily guide for kidney health with checklists, progress tracking, and personalized guidance.">
+  <meta name="keywords" content="kidney health, health tracking, wellness, daily checklist">
+  <meta name="author" content="Family Care">
+  <!-- Open Graph tags for better social sharing -->
+  <meta property="og:title" content="Kidney Fix-It Plan">
+  <meta property="og:description" content="A daily guide for kidney health with checklists and progress tracking.">
+  <meta property="og:image" content="assets/icon-512.png">
+  <meta property="og:type" content="website">
+  <!-- Accessibility improvements -->
+  <meta name="application-name" content="Kidney Fix-It Plan">
   <title>A Message from Your Family - Kidney Fix-It Plan</title>
   <link rel="stylesheet" href="Kplan.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -248,7 +258,8 @@
 
   <!-- Offline indicator -->
   <div id="offline-message" class="offline-indicator">
-    <i class="fas fa-wifi"></i> You're offline, but everything still works!
+    <i class="fas fa-wifi"></i>
+    <p>You're offline. Your progress is still being saved.</p>
   </div>
 
   <header>
@@ -431,41 +442,56 @@
 
   <div class="floating-widget">
     <div class="widget-streak">
-      <i class="fas fa-fire"></i>
-      <div>
-        <span id="floating-streak-count">0</span> day streak
-        <span class="widget-hint" id="widget-hint">(tap to expand)</span>
-      </div>
+      <span>Day Streak: </span>
+      <span id="floating-streak-count">0</span>
+      <span class="widget-hint" id="widget-hint">(tap to collapse)</span>
     </div>
     <div class="widget-progress">
-      <div class="progress-text"><span id="completed-count">0</span> of <span id="total-count">5</span> done today</div>
+      <span class="progress-text">Today: <span id="completed-count">0</span>/<span id="total-count">5</span></span>
       <div class="progress-bar-container">
-        <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+        <div class="progress-bar-fill" id="progress-bar" style="width: 0%;"></div>
       </div>
     </div>
     <div class="widget-actions">
-      <button id="mark-all-done">Mark Today Complete</button>
+      <button id="mark-all-done" aria-label="Mark All Tasks Complete">
+        <i class="fas fa-check-double"></i>
+      </button>
     </div>
   </div>
 
-  <div class="easter-egg" id="easter-egg">
-    Still got it, Pops. Still got it.
+  <div id="easter-egg" class="easter-egg">
+    <p class="message"></p>
   </div>
 
   <footer>
-    <button id="increase-text" class="text-size-btn" aria-label="Make text larger">
-      <i class="fas fa-plus"></i> Larger Text
-    </button>
-    <button id="decrease-text" class="text-size-btn" aria-label="Make text smaller">
-      <i class="fas fa-minus"></i> Smaller Text
-    </button>
-    <button id="read-aloud" class="audio-btn" aria-label="Read this page aloud">
-      <i class="fas fa-volume-up"></i> Read Aloud
-    </button>
-    <button id="stop-reading" class="audio-btn" aria-label="Stop reading aloud">
-      <i class="fas fa-volume-mute"></i> Stop Reading
-    </button>
-    <p class="love-note">Made with love by your family. We're not trying to change you - just keep you around longer.</p>
+    <div class="text-controls">
+      <button id="decrease-text" class="text-size-btn" aria-label="Decrease Text Size">
+        <i class="fas fa-font"></i>
+        <span class="btn-text">A-</span>
+      </button>
+      <button id="increase-text" class="text-size-btn" aria-label="Increase Text Size">
+        <i class="fas fa-font"></i>
+        <span class="btn-text">A+</span>
+      </button>
+    </div>
+
+    <div class="audio-controls">
+      <button id="read-aloud" class="audio-btn" aria-label="Read Content Aloud">
+        <i class="fas fa-volume-up"></i>
+        <span class="btn-text">Read Aloud</span>
+      </button>
+      <button id="stop-reading" class="audio-btn" style="display: none;" aria-label="Stop Reading">
+        <i class="fas fa-stop"></i>
+        <span class="btn-text">Stop</span>
+      </button>
+    </div>
+    
+    <div class="print-section">
+      <button id="print-pdf" class="print-btn" aria-label="Print or Save as PDF">
+        <i class="fas fa-print"></i>
+        <span class="btn-text">Print/Save PDF</span>
+      </button>
+    </div>
   </footer>
 
   <script src="Kplan.js"></script>
@@ -874,6 +900,61 @@
         });
       }
     }
+    
+    // Register the service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful');
+          })
+          .catch(err => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+      });
+      
+      // Handle online/offline status
+      window.addEventListener('online', () => {
+        document.getElementById('offline-message').classList.remove('show');
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({
+            type: 'NETWORK_STATUS',
+            online: true
+          });
+        }
+      });
+      
+      window.addEventListener('offline', () => {
+        document.getElementById('offline-message').classList.add('show');
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({
+            type: 'NETWORK_STATUS',
+            online: false
+          });
+        }
+      });
+    }
+    
+    // Print to PDF functionality
+    document.getElementById('print-pdf').addEventListener('click', function() {
+      // Prepare page for printing
+      document.body.classList.add('printing');
+      
+      // Add temporary print message at the top
+      const printMsg = document.createElement('div');
+      printMsg.className = 'print-message';
+      printMsg.innerHTML = '<h2>Kidney Fix-It Plan - Progress and Guide</h2><p>Printed on ' + new Date().toLocaleDateString() + '</p>';
+      document.body.insertBefore(printMsg, document.body.firstChild);
+      
+      // Print the page
+      window.print();
+      
+      // Clean up after printing dialog closes
+      setTimeout(() => {
+        document.body.classList.remove('printing');
+        printMsg.remove();
+      }, 1000);
+    });
   </script>
 </body>
 </html> 

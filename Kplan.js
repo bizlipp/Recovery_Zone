@@ -30,7 +30,9 @@ const CONFIG = {
     { id: 'tea', text: 'Had a cup of kidney-supporting tea', info: 'Nettle, corn silk, or dandelion tea all help your kidneys work better.' },
     { id: 'salt', text: 'Went easy on the salt today', info: 'Less salt means less work for your kidneys to filter it out.' },
     { id: 'rest', text: 'Took time to rest', info: 'Rest lets your body repair itself, especially your kidneys.' }
-  ]
+  ],
+  debounceDelay: 150,
+  storageBatchUpdate: false
 };
 
 // List of friendly easter egg messages
@@ -107,7 +109,9 @@ let state = {
   speechSynthesis: window.speechSynthesis,
   currentUtterance: null,
   isReading: false,
-  isDarkMode: false
+  isDarkMode: false,
+  storageQueue: {},
+  storageTimer: null
 };
 
 // ======= Initialization =======
@@ -127,7 +131,44 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Setup service worker update handling
   setupServiceWorkerUpdates();
+  
+  // Add optimized scroll event listener
+  window.addEventListener('scroll', debounce(handleScroll), { passive: true });
+  
+  // Check for battery status
+  if ('getBattery' in navigator) {
+    navigator.getBattery().then(batteryStatusHandler);
+  }
 });
+
+/**
+ * Handles scroll events in a performance-optimized way
+ */
+function handleScroll() {
+  updateFloatingWidget();
+  // Other scroll-based functionality can be added here
+}
+
+/**
+ * Monitors battery status and enables battery saving mode when needed
+ * @param {BatteryManager} battery - Battery manager object
+ */
+function batteryStatusHandler(battery) {
+  const handleBatteryChange = () => {
+    if (battery.level <= 0.2) {
+      document.body.classList.add('battery-saving-mode');
+    } else {
+      document.body.classList.remove('battery-saving-mode');
+    }
+  };
+  
+  // Initial check
+  handleBatteryChange();
+  
+  // Add event listeners for battery changes
+  battery.addEventListener('levelchange', handleBatteryChange);
+  battery.addEventListener('chargingchange', handleBatteryChange);
+}
 
 // ======= Service Worker Handling =======
 function setupServiceWorkerUpdates() {
@@ -289,39 +330,46 @@ function initCollapsingWidget() {
   });
 }
 
-// ======= Mark All Done button =======
+// ======= Mark All Done Button =======
 function setupMarkAllDone() {
   elements.markAllDoneBtn.addEventListener('click', function() {
-    const checkboxes = document.querySelectorAll('#checklist-container input[type="checkbox"]');
+    // Get current checklist data
+    let checklistData = getFromStorage(CONFIG.storageKeys.checklistData, {});
+    const today = getTodayDateString();
+    const todayData = checklistData[today] || {};
     
-    checkboxes.forEach(checkbox => {
-      if (!checkbox.checked) {
-        checkbox.checked = true;
-        saveChecklistItem(checkbox.id, true);
-        
-        // Add visual feedback
-        const itemElement = checkbox.closest('.checklist-item');
-        itemElement.style.backgroundColor = 'rgba(232, 248, 245, 0.5)';
-        setTimeout(() => {
-          itemElement.style.backgroundColor = '';
-        }, 1000);
+    // Check if all items are already checked
+    const allDone = CONFIG.checklistItems.every(item => todayData[item.id] === true);
+    
+    if (allDone) {
+      // If all done, uncheck all
+      CONFIG.checklistItems.forEach(item => {
+        todayData[item.id] = false;
+        const checkbox = document.getElementById(item.id);
+        if (checkbox) checkbox.checked = false;
+      });
+      playSound('https://assets.mixkit.co/sfx/preview/mixkit-interface-option-select-2573.mp3', 0.5);
+    } else {
+      // Otherwise check all
+      CONFIG.checklistItems.forEach(item => {
+        todayData[item.id] = true;
+        const checkbox = document.getElementById(item.id);
+        if (checkbox) checkbox.checked = true;
+      });
+      playSound('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3', 0.7);
+      
+      // Show success message if they weren't all checked before
+      if (!allDone) {
+        const message = getRandomItem(milestoneMessages.progressMessages.allDone);
+        showEasterEgg(message);
       }
-    });
+    }
     
-    // Play satisfying sound
-    playSound('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3', 0.3);
-    
-    // Update counts
-    updateStreakCount();
+    // Update storage and interface
+    checklistData[today] = todayData;
+    batchStorageUpdate(CONFIG.storageKeys.checklistData, checklistData);
     updateFloatingWidget();
-    
-    // Show congratulatory easter egg - use enhanced version
-    const completionMessages = milestoneMessages.progressMessages.allDone;
-    const randomMessage = completionMessages[Math.floor(Math.random() * completionMessages.length)];
-    showEasterEgg(randomMessage);
-    
-    // Check for total completed days milestone
-    checkCompletedDaysMilestone();
+    checkForProgressMessage();
   });
 }
 
@@ -352,6 +400,22 @@ function showEasterEgg(message) {
 }
 
 // ======= Utility Functions =======
+/**
+ * Debounces a function to prevent excessive execution
+ * @param {function} func - Function to debounce
+ * @param {number} delay - Delay in milliseconds
+ * @returns {function} - Debounced function
+ */
+function debounce(func, delay = CONFIG.debounceDelay) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+}
+
 /**
  * Plays a sound with the specified volume
  * @param {string} url - URL of the sound file to play
@@ -393,10 +457,11 @@ function getTodayDateString() {
  */
 function getFromStorage(key, fallback) {
   try {
-    const value = localStorage.getItem(key);
-    return value ? JSON.parse(value) : fallback;
-  } catch (error) {
-    console.warn(`Error parsing localStorage key '${key}':`, error);
+    const item = localStorage.getItem(key);
+    if (item === null) return fallback;
+    return JSON.parse(item);
+  } catch (e) {
+    console.error(`Error retrieving ${key} from storage:`, e);
     return fallback;
   }
 }
@@ -409,12 +474,74 @@ function getFromStorage(key, fallback) {
  */
 function saveToStorage(key, value) {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    if (CONFIG.storageBatchUpdate) {
+      batchStorageUpdate(key, value);
+    } else {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
     return true;
-  } catch (error) {
-    console.error(`Error saving to localStorage key '${key}':`, error);
+  } catch (e) {
+    console.error(`Error saving ${key} to storage:`, e);
+    
+    // If it's a quota error, try to clear non-critical data
+    if (e.name === 'QuotaExceededError') {
+      handleStorageQuotaExceeded();
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (e2) {
+        console.error(`Still couldn't save after cleanup:`, e2);
+      }
+    }
     return false;
   }
+}
+
+/**
+ * Handles local storage quota exceeded error by clearing non-critical data
+ */
+function handleStorageQuotaExceeded() {
+  const nonCriticalKeys = [
+    CONFIG.storageKeys.homeScreenPromptShown,
+    CONFIG.storageKeys.collapsedSections,
+    CONFIG.storageKeys.acknowledgedAchievements
+  ];
+  
+  // Try clearing non-critical data first
+  nonCriticalKeys.forEach(key => {
+    try {
+      localStorage.removeItem(key);
+    } catch (e) {
+      console.error(`Error removing ${key}:`, e);
+    }
+  });
+}
+
+/**
+ * Batches localStorage updates to reduce writes
+ * @param {string} key - Storage key
+ * @param {*} value - Value to store
+ */
+function batchStorageUpdate(key, value) {
+  // Add to queue
+  state.storageQueue[key] = value;
+  
+  // Clear existing timer if any
+  if (state.storageTimer) {
+    clearTimeout(state.storageTimer);
+  }
+  
+  // Set new timer for batch update
+  state.storageTimer = setTimeout(() => {
+    Object.entries(state.storageQueue).forEach(([k, v]) => {
+      try {
+        localStorage.setItem(k, JSON.stringify(v));
+      } catch (e) {
+        console.error(`Error in batch update for ${k}:`, e);
+      }
+    });
+    // Clear the queue after processing
+    state.storageQueue = {};
+  }, 300);
 }
 
 // ======= Scroll Tracking =======
@@ -516,21 +643,36 @@ function checkForSpecialDayMessages() {
 }
 
 function saveChecklistItem(id, isChecked) {
+  // Get existing data
+  let checklistData = getFromStorage(CONFIG.storageKeys.checklistData, {});
   const today = getTodayDateString();
-  const checklistData = getFromStorage(CONFIG.storageKeys.checklistData, {});
   
+  // Ensure today's data exists
   if (!checklistData[today]) {
     checklistData[today] = {};
   }
   
+  // Update the specific item
   checklistData[today][id] = isChecked;
+  
+  // Save back to storage
   saveToStorage(CONFIG.storageKeys.checklistData, checklistData);
   
-  updateStreakCount();
+  // Update UI elements
   updateFloatingWidget();
   
-  // Check for progress-based messages
+  // Check for special messages
   checkForProgressMessage();
+  
+  // Play sound for completion
+  if (isChecked) {
+    playSound('https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3', 0.5);
+  }
+  
+  // Add haptic feedback if available
+  if (navigator.vibrate && isChecked) {
+    navigator.vibrate(50);
+  }
 }
 
 // Check for progress-based messages (halfway, almost done, etc.)
