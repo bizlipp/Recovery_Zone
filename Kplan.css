@@ -1,128 +1,148 @@
 :root {
-  --text-size-base: 18px;
-  --primary-color: #2c3e50; /* Dark blue */
-  --secondary-color: #2980b9; /* Slightly darker blue than before for better contrast */
-  --accent-color: #d35400; /* Darker orange for better contrast */
-  --background-color: #ffffff; /* Pure white background */
-  --card-color: #ffffff; /* White cards */
-  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Subtle shadow for cards */
-  --text-color: #2c3e50; /* Using primary color for text */
-  --border-color: #e0e6ed; /* Very light gray border */
-  --success-color: #27ae60; /* Green */
-  --error-color: #e74c3c; /* Red for errors */
-  --quiet-text-color: #5d6d7e; /* For subtitles and less important text */
+--text-size-base: 18px;
+--primary-color: #2c3e50; /* Dark blue */
+--secondary-color: #2980b9; /* Slightly darker blue than before for better contrast */
+--accent-color: #d35400; /* Darker orange for better contrast */
+--background-color: #ffffff; /* Pure white background */
+--card-color: #ffffff; /* White cards */
+--card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Subtle shadow for cards */
+--text-color: #2c3e50; /* Using primary color for text */
+--border-color: #e0e6ed; /* Very light gray border */
+--success-color: #27ae60; /* Green */
+--error-color: #e74c3c; /* Red for errors */
+--quiet-text-color: #5d6d7e; /* For subtitles and less important text */
+--chart-background: #f7fbff; /* Light blue background for charts */
+--highlight-background: #fff8e0; /* Light yellow for highlights */
+--achievement-color: #f39c12; /* Orange-yellow for achievements */
+--improved-color: rgba(39, 174, 96, 0.1); /* Transparent green for improved metrics */
+--input-text-color: #333333; /* Dark text for light mode inputs */
+--input-background: #ffffff; /* White background for inputs */
+--input-border: #cccccc; /* Light gray border for inputs */
+--input-focus-border: #3498db; /* Focus border color */
+--input-focus-shadow: rgba(52, 152, 219, 0.25); /* Focus shadow color */
+/* Card background */
+/* Card text color */
+--button-text: #ffffff; /* Button text color */
+--disabled-text: #888888; /* Disabled text color */
+--link-color: #3498db; /* Link color */
+--link-hover: #2980b9; /* Link hover color */
+--table-header-text: #ffffff; /* Table header text */
+--table-header-bg: #2c3e50; /* Table header background */
+--table-row-hover: rgba(44, 62, 80, 0.05); /* Table row hover */
+--checklist-item-bg: #f9fbff; /* Background for checklist items */
+--checklist-item-hover: #f0f7ff; /* Hover state for checklist items */
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  padding: 0;
-  margin: 0;
-  font-size: var(--text-size-base);
-  line-height: 1.6;
-  padding-bottom: 70px; /* Space for the floating bar */
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background-color: var(--background-color);
+color: var(--text-color);
+padding: 0;
+margin: 0;
+font-size: var(--text-size-base);
+line-height: 1.6;
+padding-bottom: 70px; /* Space for the floating bar */
 }
 
 /* Layout */
 header, main, footer {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
+max-width: 1000px;
+margin: 0 auto;
+padding: 20px;
 }
 
 header {
-  background-color: var(--primary-color);
-  color: white;
-  text-align: center;
-  padding: 30px 20px;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+background-color: var(--primary-color);
+color: white;
+text-align: center;
+padding: 30px 20px;
+border-bottom-left-radius: 15px;
+border-bottom-right-radius: 15px;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .personal-message h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-  color: white;
-  border: none;
+font-size: 2.5rem;
+margin-bottom: 10px;
+color: white;
+border: none;
 }
 
 .personal-message p {
-  font-size: 1.2rem;
-  margin-top: 0;
-  opacity: 0.9;
+font-size: 1.2rem;
+margin-top: 0;
+opacity: 0.9;
 }
 
 /* Section Styling */
 .content-section {
-  background-color: var(--card-color);
-  border-radius: 15px;
-  box-shadow: var(--card-shadow);
-  padding: 30px;
-  margin-bottom: 30px;
-  border-left: 8px solid var(--accent-color);
-  overflow: hidden;
-  transition: all 0.3s ease;
+background-color: var(--card-color);
+border-radius: 15px;
+box-shadow: var(--card-shadow);
+padding: 30px;
+margin-bottom: 30px;
+border-left: 8px solid var(--accent-color);
+overflow: hidden;
+transition: all 0.3s ease;
 }
 
 /* Collapsible Card Styling */
 .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  padding-bottom: 15px;
-  border-bottom: 2px solid var(--border-color);
-  margin-bottom: 20px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+cursor: pointer;
+padding-bottom: 15px;
+border-bottom: 2px solid var(--border-color);
+margin-bottom: 20px;
 }
 
 .card-header h2 {
-  margin: 0;
-  padding: 0;
-  border: none;
-  flex: 1;
+margin: 0;
+padding: 0;
+border: none;
+flex: 1;
 }
 
 .card-toggle {
-  background: none;
-  border: none;
-  color: var(--secondary-color);
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 5px 10px;
-  border-radius: 5px;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+background: none;
+border: none;
+color: var(--secondary-color);
+font-size: 1.2rem;
+cursor: pointer;
+padding: 5px 10px;
+border-radius: 5px;
+transition: all 0.2s;
+display: flex;
+align-items: center;
+gap: 5px;
 }
 
 .card-toggle:hover {
-  background-color: rgba(52, 152, 219, 0.1);
+background-color: rgba(52, 152, 219, 0.1);
 }
 
 .card-content {
-  overflow: hidden;
-  max-height: 1000px; /* Arbitrary large height */
-  transition: max-height 0.5s ease;
+overflow: hidden;
+max-height: 1000px; /* Arbitrary large height */
+transition: max-height 0.5s ease;
 }
 
 .card-collapsed .card-content {
-  max-height: 0;
+max-height: 0;
 }
 
 .card-collapsed {
-  padding-top: 20px;
-  padding-bottom: 20px;
+padding-top: 20px;
+padding-bottom: 20px;
 }
 
 h1, h2, h3 {
-  color: var(--primary-color);
-  padding-bottom: 10px;
-  margin-top: 25px;
-  border-bottom: 2px solid var(--border-color);
-  font-weight: 600;
+color: var(--primary-color);
+font-weight: 600;
+padding-bottom: 10px;
+margin-top: 25px;
+border-bottom: 2px solid var(--border-color);
 }
 
 h1 { font-size: 2.2rem; }
@@ -130,715 +150,1804 @@ h2 { font-size: 1.8rem; }
 h3 { font-size: 1.4rem; }
 
 .subtitle {
-  color: var(--quiet-text-color);
-  font-style: italic;
-  margin-top: -5px;
+color: var(--quiet-text-color);
+font-style: italic;
+margin-top: -5px;
+font-weight: 500; /* Slightly bolder for better readability */
 }
 
 ul {
-  padding-left: 25px;
-  margin: 20px 0;
+padding-left: 25px;
+margin: 20px 0;
 }
 
 li {
-  margin-bottom: 15px;
-  position: relative;
-  line-height: 1.5;
+margin-bottom: 15px;
+position: relative;
+line-height: 1.5;
 }
 
 strong {
-  color: var(--primary-color);
-  font-weight: 700; /* Bolder for better emphasis */
+color: var(--primary-color);
+font-weight: 700; /* Bolder for better emphasis */
 }
 
 .icon {
-  font-size: 1.4em;
-  margin-right: 8px;
-  color: var(--accent-color);
-  vertical-align: middle;
+font-size: 1.4em;
+margin-right: 8px;
+color: var(--accent-color);
+vertical-align: middle;
 }
 
 /* Daily Checklist */
 #checklist-container {
-  margin: 25px 0;
+margin: 25px 0;
 }
 
 .checklist-item {
-  display: flex;
-  align-items: center;
-  padding: 14px; /* Slightly larger padding */
-  background-color: #f9fbff; /* Very light blue tint */
-  border-radius: 8px;
-  margin-bottom: 12px;
-  transition: background-color 0.3s;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Very subtle shadow for depth */
+display: flex;
+align-items: center;
+padding: 14px;
+background-color: var(--checklist-item-bg);
+border-radius: 8px;
+margin-bottom: 12px;
+transition: background-color 0.3s;
+border: 1px solid var(--border-color);
+box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .checklist-item:hover {
-  background-color: #f0f7ff; /* Light blue on hover */
+background-color: var(--checklist-item-hover);
 }
 
 .checklist-item input[type="checkbox"] {
-  width: 25px;
-  height: 25px;
-  margin-right: 15px;
-  cursor: pointer;
+width: 25px;
+height: 25px;
+margin-right: 15px;
+cursor: pointer;
 }
 
 .checklist-item label {
-  flex-grow: 1;
-  cursor: pointer;
-  font-size: 1.1rem;
-  color: var(--text-color); /* Explicit color assignment */
+flex-grow: 1;
+cursor: pointer;
+font-size: 1.1rem;
+color: var(--text-color);
+font-weight: 500;
 }
 
 .checklist-info {
-  margin-left: 15px;
-  color: var(--secondary-color);
-  cursor: pointer;
-  font-size: 1.2rem;
+margin-left: 15px;
+color: var(--secondary-color);
+cursor: pointer;
+font-size: 1.2rem;
 }
 
 .info-tooltip {
-  display: none;
-  background-color: #f9fbff; /* Very light blue */
-  border: 1px solid var(--border-color);
-  padding: 15px;
-  border-radius: 8px;
-  margin-top: 10px;
-  font-size: 1rem;
-  color: var(--text-color);
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-  line-height: 1.5;
+display: none;
+background-color: var(--card-color);
+border: 1px solid var(--border-color);
+padding: 15px;
+border-radius: 8px;
+margin-top: 10px;
+font-size: 1rem;
+color: var(--text-color);
+box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+line-height: 1.5;
+font-weight: 500;
 }
 
 .show-info .info-tooltip {
-  display: block;
+display: block;
 }
 
 #streak-counter {
-  background-color: #f0f9f5; /* Very light green */
-  padding: 15px;
-  border-radius: 8px;
-  text-align: center;
-  margin-top: 20px;
-  border: 1px solid #d5ebdf; /* Light green border */
+background-color: var(--improved-color);
+padding: 15px;
+border-radius: 8px;
+text-align: center;
+margin-top: 20px;
+border: 1px solid #d5ebdf;
+position: relative;
+overflow: hidden;
+}
+
+#streak-counter::before {
+content: '🔥';
+position: absolute;
+right: 15px;
+top: 15px;
+font-size: 20px;
+opacity: 0.2;
 }
 
 #streak-count {
-  font-weight: bold;
-  font-size: 1.2rem;
-  color: var(--success-color);
+font-weight: bold;
+font-size: 1.2rem;
+color: var(--success-color);
 }
 
 #streak-message {
-  font-style: italic;
-  margin-top: 5px;
+font-style: italic;
+margin-top: 5px;
 }
 
 /* Floating Streak Widget */
 .floating-widget {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: var(--primary-color);
-  color: white;
-  padding: 12px 20px;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 1000;
+position: fixed;
+bottom: 0;
+left: 0;
+right: 0;
+background-color: var(--primary-color);
+color: white;
+padding: 12px 20px;
+box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+display: flex;
+justify-content: space-between;
+align-items: center;
+z-index: 1000;
 }
 
 .widget-streak {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+display: flex;
+align-items: center;
+gap: 10px;
 }
 
 .widget-streak i {
-  color: #f39c12;
-  font-size: 1.5rem;
+color: #f39c12;
+font-size: 1.5rem;
 }
 
 .widget-progress {
-  flex: 1;
-  text-align: center;
+flex: 1;
+text-align: center;
 }
 
 .progress-text {
-  font-size: 1.1rem;
-  margin-bottom: 5px;
+font-size: 1.1rem;
+margin-bottom: 5px;
 }
 
 .widget-actions button {
-  background-color: var(--success-color);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 30px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s;
+background-color: var(--success-color);
+color: white;
+border: none;
+padding: 10px 20px;
+border-radius: 30px;
+cursor: pointer;
+font-weight: bold;
+transition: background-color 0.3s;
 }
 
 .widget-actions button:hover {
-  background-color: #219653;
+background-color: #219653;
 }
 
 .progress-bar-container {
-  height: 8px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-  overflow: hidden;
-  width: 100%;
-  max-width: 200px;
-  margin: 0 auto;
+height: 8px;
+background-color: rgba(255, 255, 255, 0.2);
+border-radius: 4px;
+overflow: hidden;
+width: 100%;
+max-width: 200px;
+margin: 0 auto;
 }
 
 .progress-bar-fill {
-  height: 100%;
-  background-color: var(--success-color);
-  border-radius: 4px;
-  transition: width 0.3s;
+height: 100%;
+background-color: var(--success-color);
+border-radius: 4px;
+transition: width 0.3s;
 }
 
 /* Footer */
 footer {
-  text-align: center;
-  padding: 30px 20px;
-  border-top: 1px solid var(--border-color);
-  margin-top: 40px;
+text-align: center;
+padding: 30px 20px;
+border-top: 1px solid var(--border-color);
+margin-top: 40px;
 }
 
 .text-size-btn, .audio-btn {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  margin: 5px;
-  border-radius: 30px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s;
+background-color: var(--primary-color);
+color: white;
+border: none;
+padding: 12px 20px;
+margin: 5px;
+border-radius: 30px;
+cursor: pointer;
+font-size: 1rem;
+transition: background-color 0.3s;
 }
 
 .text-size-btn:hover, .audio-btn:hover {
-  background-color: var(--secondary-color);
+background-color: var(--secondary-color);
 }
 
 .love-note {
-  margin-top: 25px;
-  font-style: italic;
-  color: #777;
+margin-top: 25px;
+font-style: italic;
+color: var(--text-color);
+font-weight: 500;
 }
 
 /* Dark Mode Toggle */
 .mode-toggle {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  z-index: 100;
-  font-size: 1.2rem;
+position: fixed;
+top: 20px;
+right: 20px;
+background-color: var(--primary-color);
+color: white;
+border: none;
+width: 45px;
+height: 45px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+z-index: 100;
+font-size: 1.2rem;
 }
 
 /* Dark Mode Styling */
 body.dark-mode {
-  --primary-color: #3498db; /* Brighter blue for dark mode */
-  --secondary-color: #64b5f6; /* Light blue */
-  --accent-color: #e67e22; /* Brighter orange for dark mode contrast */
-  --background-color: #121212; /* Very dark gray/almost black */
-  --card-color: #1e1e1e; /* Dark card background */
-  --text-color: #ecf0f1; /* Very light gray, almost white */
-  --border-color: #444; /* More visible border in dark mode */
-  --quiet-text-color: #9eb2c7; /* Lighter but still soft color for subtitles */
+--primary-color: #3498db; /* Brighter blue for dark mode */
+--secondary-color: #64b5f6; /* Light blue */
+--accent-color: #e67e22; /* Brighter orange for dark mode contrast */
+--background-color: #121212; /* Very dark gray/almost black */
+--card-color: #1e1e1e; /* Dark card background */
+--text-color: #ecf0f1; /* Very light gray, almost white */
+--border-color: #444; /* More visible border in dark mode */
+--quiet-text-color: #9eb2c7; /* Lighter but still soft color for subtitles */
+--chart-background: rgba(52, 152, 219, 0.08);
+--highlight-background: rgba(255, 248, 224, 0.15);
+--improved-color: rgba(39, 174, 96, 0.15);
+--input-text-color: #ffffff; /* Bright white text for dark mode inputs - increased contrast */
+--input-background: #2a2a2a; /* Darker background for inputs - increased contrast */
+--input-border: #555555; /* Darker borders for inputs */
+--input-focus-border: #64b5f6;
+--input-focus-shadow: rgba(100, 181, 246, 0.25);
+--card-background: #1e1e1e;
+--card-text: #ecf0f1;
+--disabled-text: #aaaaaa;
+--table-header-bg: #21374b;
+--table-row-hover: rgba(255, 255, 255, 0.05);
+--checklist-item-bg: #252525; /* Dark background for checklist items */
+--checklist-item-hover: #2c3e50; /* Hover state for dark mode checklist items */
 }
 
 body.dark-mode .card-toggle {
-  color: #64b5f6; /* Light blue for better visibility */
+color: #64b5f6; /* Light blue for better visibility */
 }
 
 body.dark-mode .info-tooltip {
-  background-color: #262626;
-  border-color: #444;
-  color: #ccc;
+background-color: var(--card-color);
+border-color: var(--border-color);
+color: var(--text-color);
 }
 
 body.dark-mode .quote-box {
-  background-color: rgba(52, 152, 219, 0.08); /* Slight blue tint for dark mode */
+background-color: rgba(52, 152, 219, 0.08); /* Slight blue tint for dark mode */
 }
 
 /* Random Quote or Easter Egg */
 .easter-egg {
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  background-color: var(--card-color);
-  padding: 10px 15px;
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-  font-style: italic;
-  max-width: 250px;
-  z-index: 90;
-  transform: translateY(20px);
-  opacity: 0;
-  transition: all 0.5s ease;
-  display: none;
+position: fixed;
+bottom: 80px;
+right: 20px;
+background-color: var(--card-color);
+padding: 10px 15px;
+border-radius: 10px;
+box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+font-style: italic;
+max-width: 250px;
+z-index: 90;
+transform: translateY(20px);
+opacity: 0;
+transition: all 0.5s ease;
+display: none;
 }
 
 .easter-egg.show {
-  transform: translateY(0);
-  opacity: 1;
-  display: block;
+transform: translateY(0);
+opacity: 1;
+display: block;
 }
 
 .easter-egg::before {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  right: 20px;
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 10px solid var(--card-color);
+content: '';
+position: absolute;
+bottom: -10px;
+right: 20px;
+width: 0;
+height: 0;
+border-left: 10px solid transparent;
+border-right: 10px solid transparent;
+border-top: 10px solid var(--card-color);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  :root {
-    --text-size-base: 20px; /* Larger text on smaller screens */
-  }
-  
-  .content-section {
-    padding: 20px;
-    margin-left: 10px;
-    margin-right: 10px;
-  }
-  
-  h1 { font-size: 1.8rem; }
-  h2 { font-size: 1.5rem; }
-  h3 { font-size: 1.3rem; }
-  
-  .floating-widget {
-    flex-direction: column;
-    gap: 10px;
-    padding: 15px;
-  }
-  
-  .widget-actions button {
-    width: 100%;
-    margin-top: 10px;
-  }
-  
-  .widget-streak, .widget-progress {
-    width: 100%;
-  }
-  
-  .personal-message h1 {
-    font-size: 2rem;
-  }
-  
-  .text-size-btn, .audio-btn {
-    width: 100%;
-    margin: 5px 0;
-  }
-  
-  .mode-toggle {
-    top: 10px;
-    right: 10px;
-  }
+:root {
+--text-size-base: 20px; /* Larger text on smaller screens */
+}
+.content-section {
+padding: 20px;
+margin-left: 10px;
+margin-right: 10px;
+}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.3rem; }
+.floating-widget {
+flex-direction: column;
+gap: 10px;
+padding: 15px;
+}
+.widget-actions button {
+width: 100%;
+margin-top: 10px;
+}
+.widget-streak, .widget-progress {
+width: 100%;
+}
+.personal-message h1 {
+font-size: 2rem;
+}
+.text-size-btn, .audio-btn {
+width: 100%;
+margin: 5px 0;
+}
+.mode-toggle {
+top: 10px;
+right: 10px;
+}
 }
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+from { opacity: 0; }
+to { opacity: 1; }
 }
 
 @keyframes slideDown {
-  from { 
-    max-height: 0; 
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to { 
-    max-height: 1000px; 
-    opacity: 1;
-    transform: translateY(0);
-  }
+from {
+max-height: 0;
+opacity: 0;
+transform: translateY(-20px);
+}
+to {
+max-height: 1000px;
+opacity: 1;
+transform: translateY(0);
+}
 }
 
 @keyframes slideUp {
-  from { 
-    max-height: 1000px;
-    opacity: 1;
-  }
-  to { 
-    max-height: 0;
-    opacity: 0;
-  }
+from {
+max-height: 1000px;
+opacity: 1;
+}
+to {
+max-height: 0;
+opacity: 0;
+}
 }
 
 .content-section {
-  animation: fadeIn 0.8s ease-in-out;
+animation: fadeIn 0.8s ease-in-out;
 }
 
 /* Accessibility */
 *:focus {
-  outline: 3px solid var(--secondary-color);
-  outline-offset: 3px;
+outline: 3px solid var(--secondary-color);
+outline-offset: 3px;
 }
 
 .active-section {
-  border-left: 8px solid var(--success-color);
-  transition: border-left-color 0.3s;
+border-left: 8px solid var(--success-color);
+transition: border-left-color 0.3s;
 }
 
 .highlight-text {
-  background-color: #fff8e0; /* Light yellow */
-  padding: 0 3px;
-  border-radius: 2px;
+background-color: #fff8e0; /* Light yellow */
+padding: 0 3px;
+border-radius: 2px;
 }
 
 /* Special Elements */
 .quote-box {
-  background-color: #f7fbff; /* Very light blue background */
-  border-left: 5px solid var(--accent-color);
-  padding: 16px;
-  margin: 20px 0;
-  font-style: italic;
-  border-radius: 5px;
-  color: var(--text-color);
-  font-size: 1.05rem;
-  line-height: 1.6;
+background-color: var(--chart-background);
+border-left: 5px solid var(--accent-color);
+padding: 16px;
+margin: 20px 0;
+font-style: italic;
+border-radius: 5px;
+color: var(--text-color);
+font-size: 1.05rem;
+line-height: 1.6;
+font-weight: 500;
 }
 
 .progress-container {
-  height: 12px;
-  width: 100%;
-  background-color: #f1f1f1;
-  border-radius: 10px;
-  margin: 10px 0;
-  overflow: hidden;
+height: 12px;
+width: 100%;
+background-color: #f1f1f1;
+border-radius: 10px;
+margin: 10px 0;
+overflow: hidden;
 }
 
 .progress-bar {
-  height: 100%;
-  background-color: var(--success-color);
-  border-radius: 10px;
-  width: 0%;
-  transition: width 0.5s;
+height: 100%;
+background-color: var(--success-color);
+border-radius: 10px;
+width: 0%;
+transition: width 0.5s;
 }
 
 /* Add some hover effects for interactive elements */
 a, button, .checklist-item, .info-tooltip {
-  transition: all 0.3s ease;
+transition: all 0.3s ease;
 }
 
 /* Customized checkbox style */
 input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  height: 25px;
-  width: 25px;
-  background-color: white;
-  border: 2px solid var(--border-color);
-  border-radius: 5px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+appearance: none;
+-webkit-appearance: none;
+height: 25px;
+width: 25px;
+background-color: var(--input-background);
+border: 2px solid var(--input-border);
+border-radius: 5px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+transition: all 0.2s;
+}
+
+input[type="checkbox"]:focus {
+outline: none;
+border-color: var(--input-focus-border);
+box-shadow: 0 0 0 3px var(--input-focus-shadow);
 }
 
 input[type="checkbox"]:checked {
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
+background-color: var(--accent-color);
+border-color: var(--accent-color);
 }
 
 input[type="checkbox"]:checked::after {
-  content: "\f00c";
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  color: white;
-  font-size: 14px;
+content: "\f00c";
+font-family: "Font Awesome 5 Free";
+font-weight: 900;
+color: white;
+font-size: 14px;
 }
 
 /* Add to Home Screen Prompt */
 .home-screen-prompt {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: var(--card-color);
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  max-width: 320px;
-  width: 90%;
-  border: 2px solid var(--accent-color);
-  animation: slideUp 0.5s ease-out;
+position: fixed;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%);
+background-color: var(--card-color);
+border-radius: 10px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+z-index: 1000;
+max-width: 320px;
+width: 90%;
+border: 2px solid var(--accent-color);
+animation: slideUp 0.5s ease-out;
 }
 
 .prompt-content {
-  padding: 15px;
-  text-align: center;
+padding: 15px;
+text-align: center;
 }
 
 .prompt-content i {
-  font-size: 2rem;
-  color: var(--accent-color);
-  margin-bottom: 10px;
+font-size: 2rem;
+color: var(--accent-color);
+margin-bottom: 10px;
 }
 
 .prompt-instructions {
-  margin: 10px 0;
-  font-size: 0.9em;
-  color: var(--text-color);
+margin: 10px 0;
+font-size: 0.9em;
+color: var(--text-color);
 }
 
 #close-prompt {
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 8px 20px;
-  margin-top: 10px;
-  cursor: pointer;
-  font-size: 0.95em;
-  transition: background-color 0.2s;
+background-color: var(--accent-color);
+color: white;
+border: none;
+border-radius: 20px;
+padding: 8px 20px;
+margin-top: 10px;
+cursor: pointer;
+font-size: 0.95em;
+transition: background-color 0.2s;
 }
 
 #close-prompt:hover {
-  background-color: var(--secondary-color);
+background-color: var(--secondary-color);
 }
 
 @keyframes slideUp {
-  0% { transform: translate(-50%, 100px); opacity: 0; }
-  100% { transform: translate(-50%, 0); opacity: 1; }
+0% { transform: translate(-50%, 100px); opacity: 0; }
+100% { transform: translate(-50%, 0); opacity: 1; }
 }
 
 /* PWA-specific styling */
 .pwa-mode .floating-widget {
-  bottom: 0;
-  border-radius: 0;
-  width: 100%;
+bottom: 0;
+border-radius: 0;
+width: 100%;
 }
 
 .pwa-mode .mode-toggle {
-  top: 10px;
+top: 10px;
 }
 
 .pwa-mode header {
-  padding-top: 12px;
+padding-top: 12px;
 }
 
 /* Samsung Galaxy optimizations */
 @media screen and (max-width: 420px) {
-  .card-header h2 {
-    font-size: 1.3rem;
-  }
-  
-  .checklist-item {
-    padding: 12px;
-  }
-  
-  .floating-widget {
-    padding: 10px;
-  }
-  
-  footer {
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px;
-  }
-  
-  .text-size-btn, .audio-btn {
-    margin: 4px 0;
-  }
-  
-  /* Add tap highlighting effect */
-  .card-header, 
-  .checklist-item label, 
-  .shop-button,
-  #close-prompt,
-  .text-size-btn,
-  .audio-btn,
-  #mark-all-done {
-    -webkit-tap-highlight-color: rgba(14, 118, 110, 0.2);
-  }
-  
-  /* Optimize touch targets */
-  .card-toggle,
-  .checklist-item input[type="checkbox"] + label::before,
-  .shop-button,
-  .text-size-btn,
-  .audio-btn,
-  #mark-all-done {
-    min-height: 44px;
-    min-width: 44px;
-  }
+.card-header h2 {
+font-size: 1.3rem;
+}
+.checklist-item {
+padding: 12px;
+}
+.floating-widget {
+padding: 10px;
+}
+footer {
+flex-direction: column;
+gap: 8px;
+padding: 12px;
+}
+.text-size-btn, .audio-btn {
+margin: 4px 0;
+}
+/* Add tap highlighting effect */
+.card-header,
+.checklist-item label,
+.shop-button,
+#close-prompt,
+.text-size-btn,
+.audio-btn,
+#mark-all-done {
+-webkit-tap-highlight-color: rgba(14, 118, 110, 0.2);
+}
+/* Optimize touch targets */
+.card-toggle,
+.checklist-item input[type="checkbox"] + label::before,
+.shop-button,
+.text-size-btn,
+.audio-btn,
+#mark-all-done {
+min-height: 44px;
+min-width: 44px;
+}
 }
 
 /* Offline indicator */
 .offline-indicator {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background-color: var(--error-color);
-  color: white;
-  text-align: center;
-  padding: 8px;
-  font-size: 0.9rem;
-  z-index: 1000;
-  transform: translateY(-100%);
-  transition: transform 0.3s ease;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+background-color: var(--error-color);
+color: white;
+text-align: center;
+padding: 8px;
+font-size: 0.9rem;
+z-index: 1000;
+transform: translateY(-100%);
+transition: transform 0.3s ease;
 }
 
 .offline-indicator.show {
-  transform: translateY(0);
+transform: translateY(0);
 }
 
 .offline-indicator i {
-  margin-right: 5px;
+margin-right: 5px;
 }
 
 /* Dark mode improvements for Samsung AMOLED screens */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background-color: #000000; /* True black */
-    --card-color: #121212; /* Very dark gray */
-    --border-color: #333333; /* Dark borders */
-    --text-color: #ffffff; /* Pure white text for maximum contrast */
-    --quiet-text-color: #aecef5; /* Lighter blue-gray */
-  }
-  
-  .achievement-badge {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  }
-  
-  /* Improve text on dark backgrounds */
-  h1, h2, h3 {
-    color: #64b5f6; /* Light blue for headings */
-  }
-  
-  /* Additional contrast improvements */
-  .card-toggle {
-    color: #64b5f6; /* Light blue for better visibility */
-  }
-  
-  strong {
-    color: #64b5f6; /* Light blue for emphasized text */
-  }
+:root {
+--background-color: #000000; /* True black */
+--card-color: #121212; /* Very dark gray */
+--border-color: #333333; /* Dark borders */
+--text-color: #ffffff; /* Pure white text for maximum contrast */
+--quiet-text-color: #aecef5; /* Lighter blue-gray */
+}
+.achievement-badge {
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+/* Improve text on dark backgrounds */
+h1, h2, h3 {
+color: var(--primary-color);
+font-weight: 600;
+padding-bottom: 10px;
+margin-top: 25px;
+border-bottom: 2px solid var(--border-color);
+}
+/* Additional contrast improvements */
+.card-toggle {
+color: #64b5f6; /* Light blue for better visibility */
+}
+strong {
+color: #64b5f6; /* Light blue for emphasized text */
+}
 }
 
 /* Battery saving mode */
 .battery-saving-mode {
-  --primary-color: #111111;
-  --secondary-color: #333333;
-  --accent-color: #444444;
-  --background-color: #000000;
-  --card-color: #111111;
-  --text-color: #dddddd;
-  --border-color: #333333;
-  --success-color: #444444;
-  --error-color: #444444;
+--primary-color: #333333;
+--secondary-color: #555555;
+--accent-color: #666666;
+--background-color: #000000;
+--card-color: #111111;
+--text-color: #ffffff;
+--border-color: #333333;
+--success-color: #555555;
+--error-color: #555555;
+--input-text-color: #ffffff;
+--input-background: #222222;
+--input-border: #444444;
 }
 
 .battery-saving-mode .achievement-badge,
 .battery-saving-mode .floating-widget,
 .battery-saving-mode footer,
 .battery-saving-mode .progress-chart-container {
-  box-shadow: none;
+box-shadow: none;
 }
 
 .battery-saving-mode .progress-bar-fill,
 .battery-saving-mode .chart-bar {
-  animation: none;
-  transition: none;
+animation: none;
+transition: none;
 }
 
 /* Daily Progress Report styling */
 .daily-report {
-  background-color: #fff7e6; /* Light warm color */
-  border-left-color: #f39c12; /* Orange-yellow */
-  animation: slideDown 0.5s ease-in-out;
-  position: relative;
-  overflow: hidden;
-  transition: opacity 0.5s, transform 0.5s;
+background-color: #fff7e6; /* Light warm color */
+border-left-color: #f39c12; /* Orange-yellow */
+animation: slideDown 0.5s ease-in-out;
+position: relative;
+overflow: hidden;
+transition: opacity 0.5s, transform 0.5s;
 }
 
 body.dark-mode .daily-report {
-  background-color: #2b2b1f; /* Dark warm color */
-  border-left-color: #f1c40f; /* Brighter yellow for contrast */
+background-color: #2b2b1f; /* Dark warm color */
+border-left-color: #f1c40f; /* Brighter yellow for contrast */
 }
 
 .daily-report:before {
-  content: '🌅';
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 1.5rem;
-  opacity: 0.3;
+content: '🌅';
+position: absolute;
+top: 10px;
+right: 15px;
+font-size: 1.5rem;
+opacity: 0.3;
 }
 
 .close-report {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  background-color: rgba(0,0,0,0.1);
-  color: var(--text-color);
-  transition: all 0.2s;
-  z-index: 1;
+position: absolute;
+top: 5px;
+right: 5px;
+font-size: 1.2rem;
+cursor: pointer;
+width: 24px;
+height: 24px;
+display: flex;
+justify-content: center;
+align-items: center;
+border-radius: 50%;
+background-color: rgba(0,0,0,0.1);
+color: var(--text-color);
+transition: all 0.2s;
+z-index: 1;
 }
 
 .close-report:hover {
-  background-color: rgba(0,0,0,0.2);
+background-color: rgba(0,0,0,0.2);
 }
 
 body.dark-mode .close-report {
-  background-color: rgba(255,255,255,0.1);
+background-color: rgba(255,255,255,0.1);
 }
 
 body.dark-mode .close-report:hover {
-  background-color: rgba(255,255,255,0.2);
+background-color: rgba(255,255,255,0.2);
 }
 
-/* Fix input fields for dark mode */
-input[type="text"],
-textarea {
-  background-color: var(--card-color);
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
-  padding: 10px;
-  border-radius: 5px;
-}
-
+/* Ensure all dark mode form inputs, text boxes, and textareas use the correct CSS variables */
 body.dark-mode input[type="text"],
+body.dark-mode input[type="number"],
+body.dark-mode input[type="date"],
+body.dark-mode input[type="time"],
+body.dark-mode textarea,
+body.dark-mode .form-group input,
+body.dark-mode .lab-form input {
+background-color: var(--input-background) !important;
+color: var(--input-text-color) !important;
+border-color: var(--input-border) !important;
+}
+
+/* Ensure all input placeholders have proper contrast in dark mode */
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+color: rgba(255, 255, 255, 0.6);
+}
+
+/* Medication reminder styling */
+.medication-list {
+margin-top: 20px;
+}
+
+.empty-state {
+text-align: center;
+padding: 30px;
+color: var(--quiet-text-color);
+}
+
+.empty-state i {
+font-size: 3rem;
+margin-bottom: 10px;
+opacity: 0.6;
+}
+
+.medication-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 15px;
+background-color: var(--checklist-item-bg);
+border-radius: 8px;
+margin-bottom: 15px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+border: 1px solid var(--border-color);
+transition: all 0.3s ease;
+}
+
+.medication-item.taken {
+border-left: 4px solid var(--success-color);
+opacity: 0.85; /* Increased from 0.75 for better contrast */
+}
+
+.med-info {
+flex: 1;
+}
+
+.med-info h4 {
+margin: 0 0 5px 0;
+color: var(--primary-color);
+border: none;
+font-size: 1.1rem;
+padding: 0;
+font-weight: 600;
+}
+
+.med-info p {
+margin: 5px 0;
+font-size: 0.95rem; /* Increased from 0.9rem */
+color: var(--text-color); /* Changed from quiet-text-color for better contrast */
+font-weight: 500;
+}
+
+.med-info i {
+width: 20px;
+text-align: center;
+margin-right: 5px;
+}
+
+.med-actions {
+display: flex;
+gap: 10px;
+}
+
+.med-taken-btn, .med-delete-btn, .medication-btn {
+padding: 8px 12px;
+border-radius: 20px;
+border: none;
+cursor: pointer;
+font-size: 0.9rem;
+display: flex;
+align-items: center;
+gap: 5px;
+transition: all 0.2s;
+}
+
+.med-taken-btn {
+background-color: var(--success-color);
+color: white;
+font-weight: 600;
+min-width: 100px; /* Ensure reasonable touch target */
+}
+
+.med-taken-btn:hover {
+background-color: #219653;
+}
+
+.med-taken-btn:disabled {
+opacity: 0.7;
+cursor: default;
+}
+
+.med-delete-btn {
+background-color: #f8f9fa;
+color: var(--error-color);
+border: 1px solid #dee2e6;
+font-weight: 600;
+}
+
+.med-delete-btn:hover {
+background-color: var(--error-color);
+color: white;
+border-color: var(--error-color);
+}
+
+.medication-btn {
+background-color: var(--primary-color);
+color: white;
+padding: 10px 15px;
+}
+
+.medication-btn:hover {
+background-color: var(--secondary-color);
+}
+
+.add-medication {
+background-color: var(--card-color);
+border-radius: 8px;
+padding: 20px;
+margin-top: 20px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.add-medication h3 {
+margin-top: 0;
+padding-top: 0;
+}
+
+.medication-form {
+display: flex;
+flex-direction: column;
+gap: 15px;
+}
+
+.form-group {
+display: flex;
+flex-direction: column;
+gap: 5px;
+}
+
+.form-group label {
+font-weight: bold;
+color: var(--primary-color);
+}
+
+.form-group input {
+padding: 10px;
+border-radius: 5px;
+border: 1px solid var(--border-color);
+background-color: var(--input-background);
+color: var(--input-text-color);
+}
+
+.notification-permission {
+margin-top: 20px;
+padding: 15px;
+background-color: var(--highlight-background);
+border-radius: 8px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 10px;
+border: 1px solid rgba(211, 84, 0, 0.3); /* Add border for better definition */
+}
+
+body.dark-mode .notification-permission {
+background-color: rgba(230, 126, 34, 0.15);
+border-color: rgba(230, 126, 34, 0.3);
+}
+
+.notification-permission p {
+margin: 0;
+display: flex;
+align-items: center;
+gap: 8px;
+color: var(--text-color);
+font-weight: 500;
+}
+
+.notification-permission i {
+color: var(--accent-color);
+}
+
+/* Make medication UI responsive for mobile */
+@media (max-width: 768px) {
+.medication-item {
+flex-direction: column;
+align-items: flex-start;
+}
+.med-actions {
+width: 100%;
+margin-top: 15px;
+justify-content: flex-end;
+}
+.notification-permission {
+flex-direction: column;
+align-items: flex-start;
+}
+.notification-permission button {
+width: 100%;
+margin-top: 10px;
+}
+}
+
+/* Lab Results Tracking styles */
+.lab-chart-container {
+margin: 25px 0;
+padding: 20px;
+background-color: var(--background-color);
+border-radius: 10px;
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+border: 1px solid var(--border-color);
+}
+
+.lab-chart {
+width: 100%;
+height: 250px;
+margin: 20px 0;
+padding: 15px;
+background-color: var(--card-background);
+border-radius: 8px;
+overflow-x: auto;
+position: relative;
+border: 1px solid var(--border-color);
+}
+
+.lab-table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+background-color: var(--background-color);
+border-radius: 8px;
+overflow: hidden;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.lab-table th, 
+.lab-table td {
+padding: 12px 15px;
+text-align: left;
+border-bottom: 1px solid var(--border-color);
+}
+
+.lab-table th {
+background-color: var(--primary-color);
+color: white;
+font-weight: bold;
+}
+
+.lab-table tr:hover {
+background-color: rgba(0, 0, 0, 0.03);
+}
+
+.lab-table tr.improved {
+background-color: rgba(39, 174, 96, 0.15); /* Increased opacity from 0.1 */
+}
+
+.lab-delete-btn {
+background: none;
+border: none;
+color: var(--error-color); /* Changed from quiet-text-color for better contrast */
+cursor: pointer;
+transition: color 0.2s;
+}
+
+.lab-delete-btn:hover {
+color: var(--error-color);
+}
+
+.chart-line {
+stroke: var(--accent-color);
+stroke-width: 3;
+stroke-linecap: round;
+stroke-linejoin: round;
+}
+
+.chart-point {
+fill: var(--accent-color);
+stroke: white;
+stroke-width: 2;
+}
+
+.chart-label {
+font-size: 13px; /* Increased from 12px */
+fill: var(--text-color);
+font-weight: 600;
+}
+
+.chart-value {
+font-size: 13px; /* Increased from 12px */
+font-weight: bold;
+fill: var(--accent-color);
+}
+
+.goal-line {
+stroke: var(--success-color);
+stroke-width: 2;
+stroke-dasharray: 5, 5;
+}
+
+.goal-text {
+font-size: 13px; /* Increased from 12px */
+fill: var(--success-color);
+font-weight: 600;
+}
+
+.chart-note {
+text-align: center;
+font-style: italic;
+color: var(--text-color); /* Changed from quiet-text-color for better contrast */
+margin-top: 10px;
+font-weight: 500;
+}
+
+.improvement-message {
+background-color: rgba(39, 174, 96, 0.15); /* Increased opacity */
+color: #1a7c45; /* Darker green for better contrast */
+padding: 12px 15px;
+border-radius: 8px;
+margin-top: 15px;
+text-align: center;
+animation: fadeIn 0.5s ease-in;
+font-weight: 600;
+border: 1px solid rgba(39, 174, 96, 0.3); /* Added border for definition */
+}
+
+.improvement-message i {
+margin-right: 5px;
+}
+
+.add-lab {
+background-color: var(--card-color);
+border-radius: 8px;
+padding: 20px;
+margin-top: 25px;
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+border: 1px solid var(--border-color);
+}
+
+.lab-form {
+display: flex;
+flex-direction: column;
+gap: 15px;
+}
+
+.lab-btn {
+background-color: var(--primary-color);
+color: white;
+border: none;
+padding: 12px 20px;
+border-radius: 25px;
+font-weight: bold;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+transition: background-color 0.3s;
+}
+
+.lab-btn:hover {
+background-color: var(--secondary-color);
+}
+
+textarea {
+resize: vertical;
+min-height: 60px;
+font-family: inherit;
+}
+
+.empty-chart {
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100%;
+color: var(--quiet-text-color);
+font-style: italic;
+}
+
+/* Mobile responsive adjustments for lab features */
+@media (max-width: 768px) {
+.lab-table th:nth-child(3),
+.lab-table td:nth-child(3) {
+display: none;
+}
+.lab-table th:nth-child(4),
+.lab-table td:nth-child(4) {
+display: none;
+}
+.lab-chart {
+overflow-x: scroll;
+-webkit-overflow-scrolling: touch;
+height: 200px;
+}
+}
+
+/* Achievement badge styling - moved from inline styles */
+.achievement-badge {
+position: relative;
+margin: 20px auto;
+max-width: 600px;
+text-align: center;
+padding: 30px;
+background-color: var(--background-color);
+border-radius: 15px;
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+border: 2px solid var(--accent-color);
+display: none;
+}
+
+.achievement-badge.show {
+display: block;
+animation: badgeAppear 0.8s ease-in-out;
+}
+
+.achievement-badge h3 {
+color: var(--accent-color);
+border-bottom: none;
+padding-bottom: 5px;
+font-size: 1.6rem;
+font-weight: 700;
+}
+
+.achievement-badge .icon-container {
+font-size: 3rem;
+color: var(--accent-color);
+margin: 10px 0;
+}
+
+.achievement-badge p {
+font-size: 1.2rem;
+color: var(--text-color);
+font-weight: 500;
+}
+
+.achievement-list {
+margin-top: 30px;
+padding: 20px;
+background-color: var(--card-color);
+border-radius: 15px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.achievement-item {
+display: flex;
+align-items: center;
+margin-bottom: 15px;
+padding: 10px;
+border-radius: 8px;
+background-color: var(--background-color);
+}
+
+.achievement-item i {
+font-size: 1.5rem;
+margin-right: 15px;
+color: var(--secondary-color);
+}
+
+.achievement-item.unlocked i {
+color: var(--success-color);
+}
+
+.achievement-item.locked {
+opacity: 0.6;
+}
+
+@keyframes badgeAppear {
+0% { transform: scale(0.8); opacity: 0; }
+100% { transform: scale(1); opacity: 1; }
+}
+
+/* Progress chart styling - moved from inline styles */
+.progress-chart {
+width: 100%;
+margin: 20px 0;
+}
+
+.progress-chart-container {
+height: 200px;
+background-color: var(--card-color);
+border-radius: 8px;
+padding: 20px;
+position: relative;
+}
+
+.chart-bar {
+position: absolute;
+bottom: 20px;
+width: 16px;
+background-color: var(--accent-color);
+border-radius: 4px 4px 0 0;
+transition: height 0.5s ease;
+}
+
+.chart-label {
+position: absolute;
+bottom: 0;
+font-size: 12px;
+color: var(--text-color);
+text-align: center;
+padding-top: 5px;
+}
+
+/* Shopping section styling - moved from inline styles */
+.shopping-table {
+width: 100%;
+border-collapse: collapse;
+margin: 20px 0;
+font-size: 0.95rem;
+overflow-x: auto;
+display: block;
+}
+
+.shopping-table th, 
+.shopping-table td {
+padding: 10px;
+text-align: left;
+border-bottom: 1px solid var(--border-color);
+}
+
+.shopping-table th {
+background-color: var(--primary-color);
+color: white;
+position: sticky;
+top: 0;
+}
+
+.shopping-table tr:hover {
+background-color: rgba(232, 248, 245, 0.3);
+}
+
+.shopping-table td:first-child {
+font-weight: bold;
+}
+
+@media (max-width: 768px) {
+.shopping-table th,
+.shopping-table td {
+padding: 6px;
+font-size: 0.9rem;
+}
+.shopping-table th:nth-child(4),
+.shopping-table td:nth-child(4),
+.shopping-table th:nth-child(5),
+.shopping-table td:nth-child(5) {
+display: none;
+}
+}
+
+.shop-button {
+background-color: var(--primary-color);
+color: white;
+border: none;
+padding: 8px 16px;
+border-radius: 20px;
+cursor: pointer;
+font-size: 0.9rem;
+margin-top: 10px;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+transition: background-color 0.3s;
+}
+
+.shop-button:hover {
+background-color: var(--secondary-color);
+}
+
+/* Filters for shopping items */
+.shopping-filters {
+display: flex;
+gap: 10px;
+flex-wrap: wrap;
+margin-bottom: 15px;
+}
+
+.shopping-button-active {
+background-color: var(--success-color);
+}
+
+/* Highlight specific categories */
+.miller { border-left: 4px solid #3498db; }
+.pharmacy { border-left: 4px solid #e74c3c; }
+.dollar { border-left: 4px solid #2ecc71; }
+
+/* Additional chart styling for consistency with lab results */
+.progress-chart h3 {
+color: var(--primary-color);
+margin-top: 0;
+padding-top: 0;
+text-align: center;
+}
+
+/* General form styling for consistency across the app */
+textarea, 
+input[type="text"], 
+input[type="number"], 
+input[type="date"], 
+input[type="time"] {
+width: 100%;
+padding: 10px;
+border-radius: 8px;
+border: 1px solid var(--border-color);
+background-color: var(--input-background);
+color: var(--input-text-color);
+font-size: 1rem;
+font-family: inherit;
+}
+
+/* Ensure form controls maintain proper appearance in all contexts */
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group input[type="time"],
+.form-group textarea,
+.medication-form input[type="text"],
+.medication-form input[type="time"],
+.lab-form input[type="text"],
+.lab-form input[type="number"],
+.lab-form input[type="date"],
+.lab-form textarea {
+background-color: var(--input-background);
+color: var(--input-text-color);
+border-color: var(--input-border);
+}
+
+/* Fix checklist background items in all contexts */
+.checklist-item {
+background-color: var(--checklist-item-bg);
+}
+
+/* Fix checklist item hover state in dark mode */
+body.dark-mode .checklist-item:hover {
+background-color: var(--checklist-item-hover);
+}
+
+body.dark-mode .info-tooltip {
+background-color: var(--card-color);
+border-color: var(--border-color);
+}
+
+/* Additional dark mode specific improvements */
+body.dark-mode .checklist-item label {
+color: var(--text-color);
+}
+
+/* Ensure the checklist items in dark mode are consistently styled */
+body.dark-mode #checklist-container .checklist-item {
+background-color: var(--checklist-item-bg);
+border-color: var(--border-color);
+}
+
+/* Ensure custom checkboxes in dark mode have the right colors */
+body.dark-mode input[type="checkbox"] {
+appearance: none;
+-webkit-appearance: none;
+background-color: var(--input-background);
+border: 2px solid var(--input-border);
+}
+
+/* Ensure when checked, the checkbox colors are properly set in dark mode */
+body.dark-mode input[type="checkbox"]:checked {
+background-color: var(--accent-color);
+border-color: var(--accent-color);
+}
+
+/* Additional dark mode improvements for form elements */
+body.dark-mode .form-group input,
+body.dark-mode .lab-form input,
+body.dark-mode .lab-form textarea,
+body.dark-mode .medication-form input,
+body.dark-mode .medication-form textarea,
+body.dark-mode .add-lab input,
+body.dark-mode .add-medication input {
+background-color: var(--input-background);
+color: var(--input-text-color);
+border-color: var(--input-border);
+}
+
+/* Ensure animations and feedback maintain dark mode styling */
+body.dark-mode .checklist-item[style*="background-color"] {
+background-color: rgba(46, 204, 113, 0.2) !important;
+}
+
+/* Ensure lab results table is properly styled in dark mode */
+body.dark-mode .lab-chart,
+body.dark-mode .lab-list,
+body.dark-mode .add-lab,
+body.dark-mode .add-medication,
+body.dark-mode .empty-state {
+background-color: var(--card-color);
+border-color: var(--border-color);
+color: var(--text-color);
+}
+
+/* Fix empty state backgrounds for dark mode */
+body.dark-mode .empty-state {
+background-color: var(--card-color);
+color: var(--quiet-text-color);
+}
+
+/* Additional focus state highlighting for dark mode */
+body.dark-mode input:focus,
+body.dark-mode textarea:focus,
+body.dark-mode select:focus {
+border-color: var(--input-focus-border);
+box-shadow: 0 0 0 3px var(--input-focus-shadow);
+outline: none;
+}
+
+/* Ensure labels have proper contrast in dark mode */
+body.dark-mode label,
+body.dark-mode .form-group label,
+body.dark-mode .checklist-item label {
+color: var(--text-color);
+font-weight: 500;
+}
+
+/* Additional specific input selectors to improve dark mode text box contrast */
+body.dark-mode [contenteditable="true"],
+body.dark-mode .editable-field,
+body.dark-mode .note-field,
+body.dark-mode .text-input,
+body.dark-mode .note-area,
+body.dark-mode [type="text"],
+body.dark-mode [type="number"],
+body.dark-mode [type="date"],
+body.dark-mode [type="time"] {
+background-color: var(--input-background);
+color: var(--input-text-color);
+border-color: var(--input-border);
+}
+
+/* Improve visibility of filled text elements */
+body.dark-mode .checklist-item input[type="text"]:focus,
+body.dark-mode .form-group input:focus,
+body.dark-mode .lab-form input:focus,
+body.dark-mode .medication-form input:focus,
+body.dark-mode textarea:focus {
+background-color: #333333; /* Slightly lighter when focused */
+border-color: var(--input-focus-border);
+color: var(--input-text-color);
+box-shadow: 0 0 0 3px var(--input-focus-shadow);
+}
+
+/* Ensure medication items have proper styling in dark mode */
+body.dark-mode .medication-item {
+background-color: var(--checklist-item-bg);
+border-color: var(--border-color);
+}
+
+/* High Contrast Mode for better accessibility */
+@media (forced-colors: active) {
+/* Force all text to maximum contrast for Windows High Contrast mode */
+* {
+forced-color-adjust: none;
+}
+body {
+color: CanvasText;
+background-color: Canvas;
+}
+h1, h2, h3, h4, h5, h6, p, span, div, li, a {
+color: CanvasText;
+}
+/* Ensure buttons are clearly visible */
+button,
+.btn,
+.shop-button,
+.medication-btn,
+.lab-btn,
+.text-size-btn,
+.audio-btn {
+color: ButtonText;
+background-color: ButtonFace;
+border: 1px solid ButtonText;
+}
+/* Ensure form controls remain visible */
+input,
+textarea,
+select {
+border: 1px solid ButtonText;
+background-color: Field;
+color: FieldText;
+}
+/* Make sure checkboxes are visible */
+input[type="checkbox"] {
+background-color: Field;
+border: 1px solid ButtonText;
+}
+input[type="checkbox"]:checked {
+background-color: Highlight;
+}
+/* Ensure card sections are clearly defined */
+.content-section {
+border: 1px solid ButtonText;
+}
+/* Make sure achievement badges are visible */
+.achievement-badge {
+border: 2px solid Highlight;
+}
+/* Ensure chart elements remain visible */
+.chart-line {
+stroke: Highlight;
+}
+.chart-point {
+fill: Highlight;
+}
+.progress-bar-fill {
+background-color: Highlight;
+}
+/* Ensure table content is visible */
+table, th, td {
+border: 1px solid ButtonText;
+}
+}
+
+/* Print styles for better accessibility when printed */
+@media print {
+body {
+background-color: white;
+color: black;
+font-size: 12pt;
+line-height: 1.4;
+padding: 0;
+margin: 0;
+}
+/* Hide unnecessary elements when printing */
+.mode-toggle,
+.floating-widget,
+.offline-indicator,
+.card-toggle,
+.easter-egg,
+footer,
+button {
+display: none !important;
+}
+/* Ensure all content is visible */
+.content-section {
+break-inside: avoid;
+page-break-inside: avoid;
+border: 1px solid #ccc;
+padding: 10px;
+margin: 15px 0;
+box-shadow: none;
+}
+/* Show all collapsed sections */
+.card-collapsed .card-content {
+max-height: none !important;
+display: block !important;
+}
+/* Ensure readable text */
+h1, h2, h3 {
+color: var(--primary-color);
+font-weight: 600;
+padding-bottom: 10px;
+margin-top: 25px;
+border-bottom: 2px solid var(--border-color);
+}
+p, li, td, th {
+color: black;
+}
+/* Ensure tables are clearly printed */
+table {
+border-collapse: collapse;
+width: 100%;
+}
+th, td {
+border: 1px solid #999;
+padding: 8px;
+}
+/* Print URLs for links */
+a::after {
+content: " (" attr(href) ")";
+font-size: 90%;
+}
+/* Ensure charts and progress indicators print clearly */
+.chart-bar, .progress-bar-fill {
+border: 1px solid #999;
+}
+/* Add page breaks where appropriate */
+h2 {
+page-break-after: avoid;
+}
+img {
+max-width: 100% !important;
+}
+/* Print specific header */
+@page {
+margin: 0.5cm;
+}
+.print-header {
+display: block;
+text-align: center;
+margin-bottom: 20px;
+border-bottom: 1px solid #ccc;
+padding-bottom: 10px;
+}
+/* Ensure checkboxes status is visible */
+input[type="checkbox"] {
+-webkit-appearance: checkbox;
+appearance: checkbox;
+width: auto;
+height: auto;
+}
+}
+
+/* Ensure text inputs have the right colors in dark mode */
+body.dark-mode input[type="text"],
+body.dark-mode input[type="number"], 
+body.dark-mode input[type="date"],
+body.dark-mode input[type="time"],
 body.dark-mode textarea {
-  background-color: #2a2a2a;
-  color: #ecf0f1;
+background-color: var(--input-background);
+color: var(--input-text-color);
+border-color: var(--input-border);
+}
+
+/* Fix checklist item hover state in dark mode */
+body.dark-mode .checklist-item:hover {
+background-color: #2c3e50;
+}
+
+/* Fix empty checklist item in dark mode */
+body.dark-mode .checklist-item {
+background-color: var(--checklist-item-bg);
+border-color: var(--border-color);
+}
+
+/* Fix medications item styling for dark mode */
+body.dark-mode .medication-item {
+background-color: var(--checklist-item-bg);
+border-color: var(--border-color);
+}
+
+/* Fix lab chart and entry forms for dark mode consistency */
+body.dark-mode .add-medication,
+body.dark-mode .add-lab {
+background-color: var(--card-color);
+border-color: var(--border-color);
+}
+
+/* Ensure custom checkboxes maintain appearance in dark mode */
+body.dark-mode input[type="checkbox"] {
+background-color: var(--input-background);
+border-color: var(--input-border);
+}
+
+body.dark-mode input[type="checkbox"]:checked {
+background-color: var(--accent-color);
+border-color: var(--accent-color);
+}
+
+/* Additional specific input selectors to improve dark mode text box contrast */
+body.dark-mode [contenteditable="true"],
+body.dark-mode .editable-field,
+body.dark-mode .note-field,
+body.dark-mode .text-input,
+body.dark-mode .note-area,
+body.dark-mode [type="text"],
+body.dark-mode [type="number"],
+body.dark-mode [type="date"],
+body.dark-mode [type="time"] {
+background-color: var(--input-background);
+color: var(--input-text-color);
+border-color: var(--input-border);
+}
+
+/* Improve visibility of filled text elements */
+body.dark-mode .checklist-item input[type="text"]:focus,
+body.dark-mode .form-group input:focus,
+body.dark-mode .lab-form input:focus,
+body.dark-mode .medication-form input:focus,
+body.dark-mode textarea:focus {
+background-color: #333333; /* Slightly lighter when focused */
+border-color: var(--input-focus-border);
+color: var(--input-text-color);
+box-shadow: 0 0 0 3px var(--input-focus-shadow);
+}
+
+/* Force high contrast on all input elements in dark mode with !important */
+body.dark-mode input[type="text"],
+body.dark-mode input[type="number"],
+body.dark-mode input[type="date"],
+body.dark-mode input[type="time"],
+body.dark-mode textarea,
+body.dark-mode .form-group input,
+body.dark-mode .medication-form input,
+body.dark-mode .lab-form input {
+background-color: var(--input-background) !important;
+color: var(--input-text-color) !important;
+border-color: var(--input-border) !important;
+}
+
+/* Apply consistent styles to all contenteditable elements and inputs */
+body.dark-mode div[contenteditable],
+body.dark-mode span[contenteditable],
+body.dark-mode p[contenteditable],
+body.dark-mode .editable,
+body.dark-mode .entry-field {
+background-color: var(--input-background) !important;
+color: var(--input-text-color) !important;
+border-color: var(--input-border) !important;
+}
+
+/* Define explicit light mode styles to prevent inheritance issues */
+body:not(.dark-mode) input[type="text"],
+body:not(.dark-mode) input[type="number"],
+body:not(.dark-mode) input[type="date"],
+body:not(.dark-mode) input[type="time"],
+body:not(.dark-mode) textarea,
+body:not(.dark-mode) select,
+body:not(.dark-mode) .form-group input,
+body:not(.dark-mode) .medication-form input,
+body:not(.dark-mode) .lab-form input {
+background-color: #ffffff !important;
+color: #333333 !important;
+border: 1px solid #cccccc !important;
+}
+
+/* Fix any edge cases with more specific selectors */
+.medication-form input[type="text"],
+.medication-form input[type="time"],
+.lab-form input[type="text"],
+.lab-form input[type="number"],
+.lab-form input[type="date"],
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group input[type="time"] {
+background-color: var(--input-background) !important;
+color: var(--input-text-color) !important;
+border: 1px solid var(--input-border) !important;
+}
+
+/* Fix input and placeholder contrast in dark mode */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background-color: var(--input-background);
+  color: var(--input-text-color);
+  border-color: var(--input-border);
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: #cccccc;
+  opacity: 1;
+}
+
+/* Light mode placeholder consistency */
+input::placeholder,
+textarea::placeholder {
+  color: #777;
+  opacity: 1;
 }
