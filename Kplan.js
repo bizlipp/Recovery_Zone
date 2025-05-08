@@ -16,6 +16,8 @@ const totalCount = document.getElementById('total-count');
 const progressBar = document.getElementById('progress-bar');
 const markAllDoneBtn = document.getElementById('mark-all-done');
 const easterEgg = document.getElementById('easter-egg');
+const medicationSection = document.getElementById('medication-section');
+const offlineMessage = document.getElementById('offline-message');
 
 // Card toggle elements
 const cardToggles = document.querySelectorAll('.card-toggle');
@@ -26,6 +28,7 @@ let speechSynthesis = window.speechSynthesis;
 let currentUtterance = null;
 let isReading = false;
 let isDarkMode = false;
+let medicationReminders = [];
 
 // List of friendly easter egg messages
 const easterEggMessages = [
@@ -85,6 +88,22 @@ document.addEventListener('DOMContentLoaded', function() {
   updateFloatingWidget();
   setupMarkAllDone();
   scheduleRandomEasterEgg();
+  
+  // Initialize medication features
+  loadMedicationReminders();
+  setupMedicationUI();
+  checkMedicationReminders();
+  
+  // Initialize lab results tracking
+  initializeLabResults();
+  
+  // Initialize UI components previously in HTML
+  initializeProgressChart();
+  initializeAchievements();
+  initializeShoppingFilters();
+  setupMobileOptimizations();
+  setupNetworkMonitoring();
+  registerServiceWorker();
 });
 
 // Card Toggle Functionality
@@ -169,7 +188,7 @@ function setupMarkAllDone() {
         
         // Add visual feedback
         const itemElement = checkbox.closest('.checklist-item');
-        itemElement.style.backgroundColor = 'rgba(232, 248, 245, 0.5)';
+        itemElement.style.backgroundColor = '#111111';
         setTimeout(() => {
           itemElement.style.backgroundColor = '';
         }, 1000);
@@ -489,8 +508,10 @@ function populateChecklist() {
         audio.volume = 0.3;
         audio.play();
         
-        itemElement.style.backgroundColor = 'rgba(232, 248, 245, 0.5)';
+        // Use a CSS variable compatible background color
+        itemElement.style.backgroundColor = '#111111';
         setTimeout(() => {
+          // Reset to CSS variable based background
           itemElement.style.backgroundColor = '';
         }, 1000);
 
@@ -767,4 +788,1166 @@ function showDailyProgressReport() {
       }, 500);
     }
   }, 30000);
+}
+
+// Medication Reminder Functions
+function loadMedicationReminders() {
+  const savedReminders = localStorage.getItem('medicationReminders');
+  
+  if (savedReminders) {
+    medicationReminders = JSON.parse(savedReminders);
+  } else {
+    // Default empty state
+    medicationReminders = [];
+    localStorage.setItem('medicationReminders', JSON.stringify(medicationReminders));
+  }
+}
+
+function saveMedicationReminders() {
+  localStorage.setItem('medicationReminders', JSON.stringify(medicationReminders));
+}
+
+function setupMedicationUI() {
+  if (!medicationSection) return;
+  
+  const medicationContent = medicationSection.querySelector('.card-content');
+  
+  // Generate the medication UI
+  medicationContent.innerHTML = `
+    <p class="subtitle">Keep track of your medications and get timely reminders.</p>
+    
+    <div class="medication-list">
+      <div id="medication-items">
+        <!-- Populated via JS -->
+      </div>
+      
+      <div class="add-medication">
+        <h3>Add New Medication</h3>
+        <div class="medication-form">
+          <div class="form-group">
+            <label for="med-name">Medication Name:</label>
+            <input type="text" id="med-name" placeholder="e.g., Blood Pressure Pills">
+          </div>
+          
+          <div class="form-group">
+            <label for="med-time">Reminder Time:</label>
+            <input type="time" id="med-time" value="08:00">
+          </div>
+          
+          <div class="form-group">
+            <label for="med-dosage">Dosage:</label>
+            <input type="text" id="med-dosage" placeholder="e.g., 1 pill">
+          </div>
+          
+          <button id="add-medication-btn" class="medication-btn">
+            <i class="fas fa-plus"></i> Add Medication
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="notification-permission" id="notification-permission">
+      <p><i class="fas fa-bell"></i> Enable notifications to get medication reminders</p>
+      <button id="enable-notifications" class="medication-btn">Enable Notifications</button>
+    </div>
+    
+    <div class="quote-box">
+      "The best medicine won't work if you don't take it consistently."
+    </div>
+  `;
+  
+  // Add event listeners
+  const addMedicationBtn = document.getElementById('add-medication-btn');
+  const enableNotificationsBtn = document.getElementById('enable-notifications');
+  
+  if (addMedicationBtn) {
+    addMedicationBtn.addEventListener('click', addNewMedication);
+  }
+  
+  if (enableNotificationsBtn) {
+    enableNotificationsBtn.addEventListener('click', requestNotificationPermission);
+  }
+  
+  // Check notification permission status
+  updateNotificationPermissionUI();
+  
+  // Populate medication items
+  renderMedicationItems();
+}
+
+function renderMedicationItems() {
+  const medicationItemsContainer = document.getElementById('medication-items');
+  if (!medicationItemsContainer) return;
+  
+  if (medicationReminders.length === 0) {
+    medicationItemsContainer.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-pills"></i>
+        <p>No medications added yet.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  let itemsHTML = '';
+  
+  medicationReminders.forEach((med, index) => {
+    const takenToday = isMedicationTakenToday(med);
+    
+    itemsHTML += `
+      <div class="medication-item ${takenToday ? 'taken' : ''}">
+        <div class="med-info">
+          <h4>${med.name}</h4>
+          <p><i class="fas fa-clock"></i> ${formatTime(med.time)}</p>
+          <p><i class="fas fa-prescription-bottle"></i> ${med.dosage}</p>
+        </div>
+        <div class="med-actions">
+          <button class="med-taken-btn" data-index="${index}" ${takenToday ? 'disabled' : ''}>
+            <i class="fas ${takenToday ? 'fa-check-circle' : 'fa-circle'}"></i> 
+            ${takenToday ? 'Taken' : 'Mark Taken'}
+          </button>
+          <button class="med-delete-btn" data-index="${index}">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  });
+  
+  medicationItemsContainer.innerHTML = itemsHTML;
+  
+  // Add event listeners
+  document.querySelectorAll('.med-taken-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const index = parseInt(this.getAttribute('data-index'));
+      markMedicationTaken(index);
+    });
+  });
+  
+  document.querySelectorAll('.med-delete-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const index = parseInt(this.getAttribute('data-index'));
+      deleteMedication(index);
+    });
+  });
+}
+
+function addNewMedication() {
+  const nameInput = document.getElementById('med-name');
+  const timeInput = document.getElementById('med-time');
+  const dosageInput = document.getElementById('med-dosage');
+  
+  // Validate inputs
+  if (!nameInput.value.trim()) {
+    nameInput.focus();
+    return;
+  }
+  
+  // Create new medication reminder
+  const newMedication = {
+    name: nameInput.value.trim(),
+    time: timeInput.value,
+    dosage: dosageInput.value.trim() || '1 dose',
+    takenDates: []
+  };
+  
+  // Add to reminders array
+  medicationReminders.push(newMedication);
+  
+  // Save to localStorage
+  saveMedicationReminders();
+  
+  // Clear form
+  nameInput.value = '';
+  dosageInput.value = '';
+  
+  // Update UI
+  renderMedicationItems();
+  
+  // Set up notification for this medication
+  scheduleNotification(newMedication);
+  
+  // Show confirmation message
+  showEasterEgg("Medication reminder added. We'll help you remember.");
+}
+
+function markMedicationTaken(index) {
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Add today to the taken dates for this med
+  if (!medicationReminders[index].takenDates) {
+    medicationReminders[index].takenDates = [];
+  }
+  
+  if (!medicationReminders[index].takenDates.includes(today)) {
+    medicationReminders[index].takenDates.push(today);
+  }
+  
+  // Save and update UI
+  saveMedicationReminders();
+  renderMedicationItems();
+  
+  // Show confirmation
+  showEasterEgg("Medication marked as taken. Good job keeping on track!");
+}
+
+function deleteMedication(index) {
+  // Ask for confirmation
+  if (confirm("Are you sure you want to delete this medication reminder?")) {
+    medicationReminders.splice(index, 1);
+    saveMedicationReminders();
+    renderMedicationItems();
+  }
+}
+
+function isMedicationTakenToday(medication) {
+  const today = new Date().toISOString().split('T')[0];
+  return medication.takenDates && medication.takenDates.includes(today);
+}
+
+function formatTime(timeString) {
+  try {
+    const [hours, minutes] = timeString.split(':');
+    let period = 'AM';
+    let hour = parseInt(hours);
+    
+    if (hour >= 12) {
+      period = 'PM';
+      if (hour > 12) hour -= 12;
+    }
+    
+    if (hour === 0) hour = 12;
+    
+    return `${hour}:${minutes} ${period}`;
+  } catch (e) {
+    return timeString;
+  }
+}
+
+function requestNotificationPermission() {
+  if (!('Notification' in window)) {
+    alert('This browser does not support notifications');
+    return;
+  }
+  
+  Notification.requestPermission().then(permission => {
+    updateNotificationPermissionUI();
+    
+    if (permission === 'granted') {
+      // Schedule notifications for existing medications
+      medicationReminders.forEach(med => {
+        scheduleNotification(med);
+      });
+      
+      // Show confirmation
+      showEasterEgg("Notifications enabled. We'll remind you when it's time to take your medicine.");
+    }
+  });
+}
+
+function updateNotificationPermissionUI() {
+  const permissionContainer = document.getElementById('notification-permission');
+  
+  if (!permissionContainer) return;
+  
+  if (!('Notification' in window)) {
+    permissionContainer.innerHTML = '<p>Your browser does not support notifications</p>';
+    return;
+  }
+  
+  if (Notification.permission === 'granted') {
+    permissionContainer.innerHTML = '<p><i class="fas fa-check-circle"></i> Notifications are enabled</p>';
+  }
+}
+
+function scheduleNotification(medication) {
+  if (Notification.permission !== 'granted') return;
+  
+  // Calculate when to send notification based on time
+  const now = new Date();
+  const [hours, minutes] = medication.time.split(':');
+  
+  const notificationTime = new Date();
+  notificationTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+  
+  // If the time is already past for today, don't schedule
+  if (notificationTime < now) return;
+  
+  // Calculate delay
+  const delay = notificationTime.getTime() - now.getTime();
+  
+  // Set timeout for notification
+  setTimeout(() => {
+    // Check if already taken before showing notification
+    if (!isMedicationTakenToday(medication)) {
+      showMedicationNotification(medication);
+    }
+  }, delay);
+}
+
+function showMedicationNotification(medication) {
+  if (Notification.permission !== 'granted') return;
+  
+  const notification = new Notification('Medication Reminder', {
+    body: `Time to take your ${medication.name} (${medication.dosage})`,
+    icon: './assets/icon-192.png'
+  });
+  
+  notification.onclick = function() {
+    window.focus();
+    notification.close();
+  };
+}
+
+function checkMedicationReminders() {
+  // Schedule checks for today's medications
+  medicationReminders.forEach(med => {
+    scheduleNotification(med);
+  });
+  
+  // Also set up check for tomorrow (at midnight)
+  const now = new Date();
+  const tomorrow = new Date();
+  tomorrow.setDate(now.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+  
+  const delay = tomorrow.getTime() - now.getTime();
+  
+  setTimeout(() => {
+    // Re-check all medications for the new day
+    checkMedicationReminders();
+  }, delay);
+}
+
+// Lab Results Tracking
+let labResults = [];
+
+// Initialize lab results tracking
+function initializeLabResults() {
+  loadLabResults();
+  setupLabResultsUI();
+  renderLabChart();
+}
+
+// Load lab results from localStorage
+function loadLabResults() {
+  const savedResults = localStorage.getItem('labResults');
+  
+  if (savedResults) {
+    labResults = JSON.parse(savedResults);
+  } else {
+    // Default with a sample starting point
+    labResults = [
+      {
+        date: '2023-11-15',
+        creatinine: 2.62,
+        egfr: 28,
+        notes: 'Starting values from doctor'
+      }
+    ];
+    saveLabResults();
+  }
+}
+
+// Save lab results to localStorage
+function saveLabResults() {
+  localStorage.setItem('labResults', JSON.stringify(labResults));
+}
+
+// Set up lab results UI
+function setupLabResultsUI() {
+  const labResultsSection = document.getElementById('lab-results-section');
+  if (!labResultsSection) return;
+  
+  const labContent = labResultsSection.querySelector('.card-content');
+  
+  labContent.innerHTML = `
+    <p class="subtitle">Track your kidney function lab results to see your progress over time.</p>
+    
+    <div class="lab-chart-container">
+      <h3>Your Creatinine Trend</h3>
+      <div class="lab-chart" id="lab-chart"></div>
+      <p class="chart-note">Lower numbers show improvement. Your starting creatinine was 2.62 mg/dL.</p>
+    </div>
+    
+    <div class="lab-list">
+      <h3>Your Lab History</h3>
+      <div id="lab-history">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+    
+    <div class="add-lab">
+      <h3>Add New Lab Results</h3>
+      <div class="lab-form">
+        <div class="form-group">
+          <label for="lab-date">Test Date:</label>
+          <input type="date" id="lab-date" value="${new Date().toISOString().split('T')[0]}">
+        </div>
+        
+        <div class="form-group">
+          <label for="creatinine">Creatinine (mg/dL):</label>
+          <input type="number" id="creatinine" step="0.01" min="0.1" max="10" placeholder="e.g., 2.62">
+        </div>
+        
+        <div class="form-group">
+          <label for="egfr">eGFR (if available):</label>
+          <input type="number" id="egfr" step="1" min="1" max="120" placeholder="e.g., 28">
+        </div>
+        
+        <div class="form-group">
+          <label for="lab-notes">Notes:</label>
+          <textarea id="lab-notes" rows="2" placeholder="Any other notes about this test"></textarea>
+        </div>
+        
+        <button id="add-lab-btn" class="lab-btn">
+          <i class="fas fa-plus"></i> Add Lab Results
+        </button>
+      </div>
+    </div>
+    
+    <div class="quote-box">
+      <p>"Keep tracking your numbers. They're the scoreboard for all your good work."</p>
+    </div>
+  `;
+  
+  // Add event listeners
+  const addLabBtn = document.getElementById('add-lab-btn');
+  
+  if (addLabBtn) {
+    addLabBtn.addEventListener('click', addNewLabResult);
+  }
+  
+  // Render lab history
+  renderLabHistory();
+}
+
+// Render lab history table
+function renderLabHistory() {
+  const labHistoryContainer = document.getElementById('lab-history');
+  if (!labHistoryContainer) return;
+  
+  if (labResults.length === 0) {
+    labHistoryContainer.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-vial"></i>
+        <p>No lab results added yet.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  // Create a table
+  let tableHTML = `
+    <table class="lab-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Creatinine</th>
+          <th>eGFR</th>
+          <th>Notes</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  
+  // Sort by date descending (newest first)
+  const sortedResults = [...labResults].sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+  sortedResults.forEach((result, index) => {
+    // Check if values have improved from previous test
+    const isImproved = index < sortedResults.length - 1 && 
+                      result.creatinine < sortedResults[index + 1].creatinine;
+    
+    const improvedClass = isImproved ? 'improved' : '';
+    
+    tableHTML += `
+      <tr class="${improvedClass}">
+        <td>${formatDate(result.date)}</td>
+        <td>${result.creatinine} mg/dL</td>
+        <td>${result.egfr || '-'}</td>
+        <td>${result.notes || '-'}</td>
+        <td>
+          <button class="lab-delete-btn" data-index="${labResults.indexOf(result)}">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+  
+  tableHTML += `
+      </tbody>
+    </table>
+  `;
+  
+  labHistoryContainer.innerHTML = tableHTML;
+  
+  // Add event listeners to delete buttons
+  document.querySelectorAll('.lab-delete-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const index = parseInt(this.getAttribute('data-index'));
+      deleteLabResult(index);
+    });
+  });
+}
+
+// Chart rendering for lab results trend
+function renderLabChart() {
+  const chartContainer = document.getElementById('lab-chart');
+  if (!chartContainer) return;
+  
+  chartContainer.innerHTML = '';
+  
+  if (labResults.length === 0) {
+    const emptyMessage = document.createElement('div');
+    emptyMessage.className = 'empty-chart';
+    emptyMessage.textContent = 'No lab results available yet. Add your first result to start tracking.';
+    chartContainer.appendChild(emptyMessage);
+    return;
+  }
+  
+  // Clone the array to avoid modifying original data
+  const sortedResults = [...labResults].sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+  // SVG setup
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  const chartWidth = sortedResults.length * 100;
+  const chartHeight = 200;
+  const padding = 40;
+  const pointRadius = 5;
+  
+  svg.setAttribute("width", chartWidth);
+  svg.setAttribute("height", chartHeight);
+  svg.setAttribute("viewBox", `0 0 ${chartWidth} ${chartHeight}`);
+  
+  // Create path for the line
+  const path = document.createElementNS(svgNS, "path");
+  let pathData = "";
+  
+  // Get min and max values to scale the chart
+  const values = sortedResults.map(r => parseFloat(r.creatinine) || 0);
+  const maxValue = Math.max(...values, 1.2) * 1.2; // Always include the goal (1.2) in the scale
+  
+  // Plot points and generate path
+  sortedResults.forEach((result, index) => {
+    // Ensure the creatinine value is a valid number
+    const creatinineValue = parseFloat(result.creatinine);
+    if (isNaN(creatinineValue)) {
+      console.warn(`Invalid creatinine value for entry dated ${result.date}`);
+      return; // Skip this point
+    }
+    
+    // Calculate coordinates
+    const x = index * 100 + 50;
+    // Map the creatinine value to the chart height (inverted, since SVG y increases downward)
+    const y = chartHeight - padding - ((creatinineValue / maxValue) * (chartHeight - (padding * 2)));
+    
+    // Ensure y is a valid number before using it
+    if (isNaN(y)) {
+      console.warn(`Calculated NaN y value for creatinine: ${creatinineValue}, maxValue: ${maxValue}`);
+      return; // Skip this point
+    }
+    
+    // Add to path
+    if (index === 0) {
+      pathData = `M ${x} ${y}`;
+    } else {
+      pathData += ` L ${x} ${y}`;
+    }
+    
+    // Create circle for point
+    const circle = document.createElementNS(svgNS, "circle");
+    circle.setAttribute("cx", x);
+    circle.setAttribute("cy", y);
+    circle.setAttribute("r", pointRadius);
+    circle.setAttribute("class", "chart-point");
+    
+    // Create date label
+    const text = document.createElementNS(svgNS, "text");
+    text.setAttribute("x", x);
+    text.setAttribute("y", chartHeight - 5);
+    text.setAttribute("text-anchor", "middle");
+    text.setAttribute("class", "chart-label");
+    text.textContent = formatShortDate(result.date);
+    
+    // Create value label
+    const valueText = document.createElementNS(svgNS, "text");
+    valueText.setAttribute("x", x);
+    valueText.setAttribute("y", y - 15);
+    text.setAttribute("text-anchor", "middle");
+    valueText.setAttribute("class", "chart-value");
+    valueText.textContent = creatinineValue.toFixed(2);
+    
+    svg.appendChild(circle);
+    svg.appendChild(text);
+    svg.appendChild(valueText);
+  });
+  
+  // Only set the path if we have valid data
+  if (pathData) {
+    path.setAttribute("d", pathData);
+    path.setAttribute("class", "chart-line");
+    path.setAttribute("fill", "none");
+    
+    // Add line before points so points appear on top
+    svg.insertBefore(path, svg.firstChild);
+    
+    // Add goal line if we have a target
+    const goalLine = document.createElementNS(svgNS, "line");
+    const goalY = chartHeight - padding - ((1.2 / maxValue) * (chartHeight - (padding * 2)));
+    
+    // Only add goal line if y value is valid
+    if (!isNaN(goalY)) {
+      goalLine.setAttribute("x1", "0");
+      goalLine.setAttribute("y1", goalY);
+      goalLine.setAttribute("x2", chartWidth);
+      goalLine.setAttribute("y2", goalY);
+      goalLine.setAttribute("class", "goal-line");
+      
+      const goalText = document.createElementNS(svgNS, "text");
+      goalText.setAttribute("x", 10);
+      goalText.setAttribute("y", goalY - 5);
+      goalText.setAttribute("class", "goal-text");
+      goalText.textContent = "Goal: <1.2";
+      
+      svg.insertBefore(goalLine, svg.firstChild);
+      svg.appendChild(goalText);
+    }
+  }
+  
+  chartContainer.appendChild(svg);
+  
+  // Check for improvement and show encouraging message
+  if (sortedResults.length >= 2) {
+    const latest = sortedResults[sortedResults.length - 1];
+    const previous = sortedResults[sortedResults.length - 2];
+    
+    const latestValue = parseFloat(latest.creatinine);
+    const previousValue = parseFloat(previous.creatinine);
+    
+    // Only show improvement message if values are valid numbers
+    if (!isNaN(latestValue) && !isNaN(previousValue) && latestValue < previousValue) {
+      const improvement = ((previousValue - latestValue) / previousValue * 100).toFixed(1);
+      const message = `Great progress! Your creatinine has improved by ${improvement}% since your last test.`;
+      
+      const improvementMsg = document.createElement('div');
+      improvementMsg.className = 'improvement-message';
+      improvementMsg.innerHTML = `<i class="fas fa-trophy"></i> ${message}`;
+      
+      chartContainer.appendChild(improvementMsg);
+      
+      // Also show as easter egg
+      showEasterEgg(message);
+    }
+  }
+}
+
+// Add new lab result
+function addNewLabResult() {
+  const dateInput = document.getElementById('lab-date');
+  const creatinineInput = document.getElementById('creatinine');
+  const egfrInput = document.getElementById('egfr');
+  const notesInput = document.getElementById('lab-notes');
+  
+  // Validate inputs
+  if (!dateInput.value || !creatinineInput.value) {
+    if (!dateInput.value) dateInput.focus();
+    else creatinineInput.focus();
+    return;
+  }
+  
+  // Create new lab result
+  const newResult = {
+    date: dateInput.value,
+    creatinine: parseFloat(creatinineInput.value),
+    egfr: egfrInput.value ? parseInt(egfrInput.value) : null,
+    notes: notesInput.value.trim()
+  };
+  
+  // Add to results array
+  labResults.push(newResult);
+  
+  // Save to localStorage
+  saveLabResults();
+  
+  // Clear form
+  creatinineInput.value = '';
+  egfrInput.value = '';
+  notesInput.value = '';
+  
+  // Update UI
+  renderLabHistory();
+  renderLabChart();
+  
+  // Show confirmation
+  showEasterEgg("Lab results saved. Keep up the good work!");
+}
+
+// Delete lab result
+function deleteLabResult(index) {
+  if (confirm("Are you sure you want to delete this lab result?")) {
+    labResults.splice(index, 1);
+    saveLabResults();
+    renderLabHistory();
+    renderLabChart();
+  }
+}
+
+// Format date for display
+function formatDate(dateString) {
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+}
+
+// Format short date for chart labels
+function formatShortDate(dateString) {
+  const date = new Date(dateString);
+  return `${date.getMonth() + 1}/${date.getDate()}`;
+}
+
+// Progress chart functionality moved from inline script
+function initializeProgressChart() {
+  const weeklyChart = document.getElementById('weekly-chart');
+  if (!weeklyChart) return;
+  
+  const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+  const today = new Date();
+  
+  // Clear existing content
+  weeklyChart.innerHTML = '';
+  
+  // Generate bars for the past 7 days
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - i);
+    const dateString = date.toISOString().split('T')[0];
+    const dayData = checklistData[dateString] || {};
+    
+    // Calculate completion percentage
+    const totalItems = 5; // Same as our checklist items
+    const completedItems = Object.values(dayData).filter(v => v === true).length;
+    const percentage = Math.min(100, (completedItems / totalItems) * 100);
+    
+    // Create the bar
+    const barContainer = document.createElement('div');
+    barContainer.style.position = 'absolute';
+    barContainer.style.left = `${(6-i) * 14 + 2}%`;
+    barContainer.style.bottom = '0';
+    barContainer.style.width = '10%';
+    barContainer.style.textAlign = 'center';
+    
+    const bar = document.createElement('div');
+    bar.className = 'chart-bar';
+    bar.style.height = `${percentage}%`;
+    bar.style.maxHeight = '160px';
+    bar.style.left = '50%';
+    bar.style.transform = 'translateX(-50%)';
+    bar.style.backgroundColor = percentage === 100 ? 'var(--success-color)' : 'var(--accent-color)';
+    
+    // Create day label
+    const label = document.createElement('div');
+    label.className = 'chart-label';
+    label.style.width = '100%';
+    label.textContent = date.getDate() + '/' + (date.getMonth() + 1);
+    
+    barContainer.appendChild(bar);
+    barContainer.appendChild(label);
+    weeklyChart.appendChild(barContainer);
+  }
+}
+
+// Shopping filters functionality moved from inline script
+function initializeShoppingFilters() {
+  const showMiller = document.getElementById('show-miller');
+  const showPharmacy = document.getElementById('show-pharmacy');
+  const showDollar = document.getElementById('show-dollar');
+  const showAll = document.getElementById('show-all');
+  
+  if (!showMiller || !showPharmacy || !showDollar || !showAll) return;
+  
+  const millerItems = document.querySelectorAll('.miller');
+  const pharmacyItems = document.querySelectorAll('.pharmacy');
+  const dollarItems = document.querySelectorAll('.dollar');
+  const allItems = document.querySelectorAll('.shopping-table tbody tr');
+  
+  showMiller.addEventListener('click', function() {
+    allItems.forEach(item => {
+      item.style.display = 'none';
+    });
+    millerItems.forEach(item => {
+      item.style.display = '';
+    });
+    highlightActiveButton(this);
+  });
+  
+  showPharmacy.addEventListener('click', function() {
+    allItems.forEach(item => {
+      item.style.display = 'none';
+    });
+    pharmacyItems.forEach(item => {
+      item.style.display = '';
+    });
+    highlightActiveButton(this);
+  });
+  
+  showDollar.addEventListener('click', function() {
+    allItems.forEach(item => {
+      item.style.display = 'none';
+    });
+    dollarItems.forEach(item => {
+      item.style.display = '';
+    });
+    highlightActiveButton(this);
+  });
+  
+  showAll.addEventListener('click', function() {
+    allItems.forEach(item => {
+      item.style.display = '';
+    });
+    highlightActiveButton(this);
+  });
+  
+  // Initially highlight "Show All" as active
+  highlightActiveButton(showAll);
+}
+
+function highlightActiveButton(activeButton) {
+  if (!activeButton) return;
+  
+  const allButtons = [
+    document.getElementById('show-miller'),
+    document.getElementById('show-pharmacy'),
+    document.getElementById('show-dollar'),
+    document.getElementById('show-all')
+  ].filter(btn => btn); // Filter out any null elements
+  
+  allButtons.forEach(button => {
+    button.classList.remove('shopping-button-active');
+    if (button === activeButton) {
+      button.classList.add('shopping-button-active');
+    }
+  });
+}
+
+// Achievements functionality moved from inline script
+function initializeAchievements() {
+  const achievementsContainer = document.getElementById('achievements-container');
+  if (!achievementsContainer) return;
+  
+  const achievements = [
+    { id: 'first-day', name: 'First Steps', icon: 'fa-shoe-prints', requirement: 'Complete your first day', unlocked: false },
+    { id: 'three-day', name: 'Building Habits', icon: 'fa-seedling', requirement: '3 day streak', unlocked: false },
+    { id: 'week-streak', name: 'Steady Progress', icon: 'fa-fire', requirement: '7 day streak', unlocked: false },
+    { id: 'two-week', name: 'Committed', icon: 'fa-calendar-check', requirement: '14 day streak', unlocked: false },
+    { id: 'month-streak', name: 'New Lifestyle', icon: 'fa-medal', requirement: '30 day streak', unlocked: false },
+    { id: 'perfect-week', name: 'Perfect Week', icon: 'fa-star', requirement: 'Complete all tasks for 7 days straight', unlocked: false }
+  ];
+  
+  // Get user streak and completed days
+  const streak = parseInt(document.getElementById('streak-count')?.textContent || '0');
+  const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+  
+  // Count days with at least one completed task
+  const completedDays = Object.keys(checklistData).filter(date => {
+    return Object.values(checklistData[date]).filter(v => v === true).length > 0;
+  }).length;
+  
+  // Determine which achievements are unlocked
+  let unlockedAchievements = [];
+  
+  if (completedDays >= 1) achievements[0].unlocked = true;
+  if (streak >= 3) achievements[1].unlocked = true;
+  if (streak >= 7) achievements[2].unlocked = true;
+  if (streak >= 14) achievements[3].unlocked = true;
+  if (streak >= 30) achievements[4].unlocked = true;
+  
+  // Check for perfect week
+  let perfectWeek = true;
+  const today = new Date();
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - i);
+    const dateString = date.toISOString().split('T')[0];
+    const dayData = checklistData[dateString] || {};
+    const completed = Object.values(dayData).filter(v => v === true).length;
+    
+    if (completed < 5) { // 5 is the total checklist items
+      perfectWeek = false;
+      break;
+    }
+  }
+  if (perfectWeek) achievements[5].unlocked = true;
+  
+  // Generate achievements HTML
+  achievementsContainer.innerHTML = '';
+  
+  achievements.forEach(achievement => {
+    const item = document.createElement('div');
+    item.className = `achievement-item ${achievement.unlocked ? 'unlocked' : 'locked'}`;
+    item.innerHTML = `
+      <i class="fas ${achievement.icon}"></i>
+      <div>
+        <strong>${achievement.name}</strong>
+        <div>${achievement.requirement}</div>
+      </div>
+    `;
+    achievementsContainer.appendChild(item);
+    
+    // Store unlocked achievements for potential display
+    if (achievement.unlocked) {
+      unlockedAchievements.push(achievement);
+    }
+  });
+  
+  // Save achievements state
+  const savedAchievements = JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
+  
+  // Check for newly unlocked achievements
+  const newlyUnlocked = unlockedAchievements.filter(a => !savedAchievements.includes(a.id));
+  
+  // If there's a new achievement, show the badge
+  if (newlyUnlocked.length > 0) {
+    const firstNew = newlyUnlocked[0];
+    
+    // Update achievement badge and show it
+    const badge = document.getElementById('achievement-badge');
+    if (badge) {
+      const badgeText = document.getElementById('achievement-text');
+      const badgeIcon = badge.querySelector('.icon-container i');
+      
+      if (badgeIcon) badgeIcon.className = `fas ${firstNew.icon}`;
+      if (badgeText) badgeText.textContent = `${firstNew.name}: ${firstNew.requirement}`;
+      
+      setTimeout(() => {
+        badge.classList.add('show');
+        
+        // Hide after 5 seconds
+        setTimeout(() => {
+          badge.classList.remove('show');
+        }, 5000);
+      }, 1000);
+      
+      // Save that we've shown this achievement
+      savedAchievements.push(firstNew.id);
+      localStorage.setItem('unlockedAchievements', JSON.stringify(savedAchievements));
+    }
+  }
+}
+
+// Mobile optimizations moved from inline script
+function setupMobileOptimizations() {
+  // Prevent zooming on double-tap for Samsung browsers
+  document.addEventListener('dblclick', function(e) {
+    e.preventDefault();
+  });
+  
+  // Add swipe capability for card toggling
+  const sections = document.querySelectorAll('.content-section');
+  sections.forEach(section => {
+    let touchStartY;
+    let touchEndY;
+    
+    section.addEventListener('touchstart', function(e) {
+      touchStartY = e.changedTouches[0].screenY;
+    }, {passive: true});
+    
+    section.addEventListener('touchend', function(e) {
+      touchEndY = e.changedTouches[0].screenY;
+      const diff = touchStartY - touchEndY;
+      
+      // If swipe distance is significant
+      if (Math.abs(diff) > 30) {
+        const header = section.querySelector('.card-header');
+        const toggle = header.querySelector('.card-toggle');
+        
+        // Swipe up to close, swipe down to open
+        if ((diff > 0 && section.classList.contains('expanded')) || 
+            (diff < 0 && !section.classList.contains('expanded'))) {
+          toggle.click();
+        }
+      }
+    }, {passive: true});
+  });
+  
+  // Add vibration feedback for completed tasks
+  const checkItems = document.querySelectorAll('.checklist-item input');
+  checkItems.forEach(item => {
+    item.addEventListener('change', function() {
+      if (this.checked && 'vibrate' in navigator) {
+        navigator.vibrate(50); // Short vibration feedback
+      }
+    });
+  });
+  
+  // Enable 'Add to Home Screen' instruction after 3 visits
+  const visitCount = parseInt(localStorage.getItem('visitCount') || '0') + 1;
+  localStorage.setItem('visitCount', visitCount.toString());
+  
+  if (visitCount === 3) {
+    // Show Add to Home Screen guidance for Samsung browsers
+    setTimeout(() => {
+      const homePrompt = document.createElement('div');
+      homePrompt.className = 'home-screen-prompt';
+      homePrompt.innerHTML = `
+        <div class="prompt-content">
+          <i class="fas fa-mobile-alt"></i>
+          <p>Add this app to your home screen for easier access!</p>
+          <p class="prompt-instructions">Tap the menu (⋮) then "Add to Home screen"</p>
+          <button id="close-prompt">Got it</button>
+        </div>
+      `;
+      document.body.appendChild(homePrompt);
+      
+      document.getElementById('close-prompt')?.addEventListener('click', function() {
+        homePrompt.style.display = 'none';
+        localStorage.setItem('homeScreenPromptShown', 'true');
+      });
+    }, 3000);
+  }
+  
+  // Check if it's a PWA (installed to home screen)
+  const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                window.navigator.standalone;
+  
+  if (isPWA) {
+    // If running as installed app, make minor UI adjustments
+    document.body.classList.add('pwa-mode');
+  }
+}
+
+// Register service worker with security check
+function registerServiceWorker() {
+  // Check if we're in a secure context (https:// or localhost)
+  const isSecureContext = window.isSecureContext || 
+                          location.protocol === 'https:' || 
+                          location.hostname === 'localhost' ||
+                          location.hostname === '127.0.0.1';
+  
+  // Only register service worker in secure contexts
+  if ('serviceWorker' in navigator && isSecureContext) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(function(registration) {
+        console.log('Service worker registered successfully');
+      })
+      .catch(function(error) {
+        console.log('Service worker registration failed:', error);
+      });
+  } else if ('serviceWorker' in navigator) {
+    console.log('Service worker registration skipped: not in a secure context');
+  }
+}
+
+// Network monitoring moved from inline script
+function setupNetworkMonitoring() {
+  // Initial check
+  if (!navigator.onLine) {
+    offlineMessage.classList.add('show');
+    document.body.classList.add('offline');
+  }
+  
+  // Listen for online/offline events
+  window.addEventListener('online', function() {
+    offlineMessage.classList.remove('show');
+    document.body.classList.remove('offline');
+    
+    // Notify service worker
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        type: 'NETWORK_STATUS',
+        online: true
+      });
+    }
+    
+    // Show a temporary "back online" message
+    const onlineMessage = document.createElement('div');
+    onlineMessage.className = 'offline-indicator';
+    onlineMessage.style.backgroundColor = 'var(--success-color)';
+    onlineMessage.innerHTML = '<i class="fas fa-wifi"></i> Connected again! Your progress is synced.';
+    document.body.appendChild(onlineMessage);
+    
+    setTimeout(() => {
+      onlineMessage.classList.add('show');
+      
+      setTimeout(() => {
+        onlineMessage.classList.remove('show');
+        setTimeout(() => onlineMessage.remove(), 300);
+      }, 3000);
+    }, 100);
+  });
+  
+  window.addEventListener('offline', function() {
+    offlineMessage.classList.add('show');
+    document.body.classList.add('offline');
+    
+    // Notify service worker
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        type: 'NETWORK_STATUS',
+        online: false
+      });
+    }
+  });
+  
+  // Listen for messages from service worker
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data && event.data.type === 'OFFLINE') {
+        offlineMessage.classList.add('show');
+        document.body.classList.add('offline');
+      } else if (event.data && event.data.type === 'ONLINE') {
+        offlineMessage.classList.remove('show');
+        document.body.classList.remove('offline');
+      }
+    });
+  }
+  
+  // Add battery-saving mode for Samsung AMOLED screens
+  if (navigator.getBattery) {
+    navigator.getBattery().then(battery => {
+      // If battery level is below 15%, enable battery saving mode
+      if (battery.level < 0.15) {
+        document.body.classList.add('battery-saving-mode');
+      }
+      
+      // Listen for battery level changes
+      battery.addEventListener('levelchange', () => {
+        if (battery.level < 0.15) {
+          document.body.classList.add('battery-saving-mode');
+        } else {
+          document.body.classList.remove('battery-saving-mode');
+        }
+      });
+    });
+  }
+}
+
+// Helper function to safely initialize UI components
+function safelyInitialize(elementId, callback) {
+  const element = document.getElementById(elementId);
+  if (element) {
+    callback(element);
+    return true;
+  }
+  return false;
+}
+
+// Update initial progress bar width
+function updateInitialProgressBar() {
+  const progressBar = document.getElementById('progress-bar');
+  if (progressBar) {
+    const today = new Date().toISOString().split('T')[0];
+    const checklistData = JSON.parse(localStorage.getItem('checklistData') || '{}');
+    const todayData = checklistData[today] || {};
+    
+    // Count completed items
+    const completed = Object.values(todayData).filter(value => value === true).length;
+    const total = document.querySelectorAll('#checklist-container .checklist-item').length || 5;
+    
+    // Update progress bar
+    const percentage = total > 0 ? (completed / total) * 100 : 0;
+    progressBar.style.width = `${percentage}%`;
+  }
 }
